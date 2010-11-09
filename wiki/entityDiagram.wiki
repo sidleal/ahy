@@ -1,7 +1,7 @@
 #labels Phase-Design
 # The kernel entities 
 
-= Introduction =
+= Diagram =
 
 This is the first version of our entity diagram, I hope not forgotted any main entity.
 
