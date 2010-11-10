@@ -1,5 +1,5 @@
 #labels Phase-Requirements
-#Main spec issues and requirements notes.
+#Main spec issues and requirement notes.
 
 ===Ahy - A Pure Java CMS===
 "For those tired of 'browser wars' and suffering."
