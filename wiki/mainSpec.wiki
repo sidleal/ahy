@@ -1,0 +1,14 @@
+#labels Phase-Requirements
+#Main spec issues and requirements notes.
+
+= Installation Wizzard =
+
+On the first run, the app must check the jboss config, ask user data and write it to:
+ * deploy/mail-service.xml (smtp server, port, user and passwd)
+ * properties-service.xml (static config like database type)
+ * ahy-cms-ds.xml (Database connection string and authentication data)
+
+after that, the update engine will create all tables and insert sample data.
+
+
+= Working on it... =
