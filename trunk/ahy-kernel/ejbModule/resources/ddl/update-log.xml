@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<update-log baseRevision="10" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="update-log.xsd">
+	<update revision="12">
+		<create-table name="Test">
+			<col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+			<col name="name" type="java.lang.String" maxLength="250" required="true"/>
+   			<col name="description" type="java.lang.String" maxLength="500" />
+   			<col name="bla" type="java.lang.String" maxLength="500" />
+   			<col name="bli" type="java.lang.String" maxLength="500" />
+   			
+   			<insert><col key="id" value="1"/><col key="name" value="test1"/><col key="description" value="First Test"/></insert>
+   			<insert><col key="id" value="2"/><col key="name" value="test2"/><col key="description" value="Second Test"/></insert>
+   			<insert><col key="id" value="3"/><col key="name" value="test3"/><col key="description" value="Third Test"/></insert>
+   							
+		</create-table>
+	</update>
+	
+	<update revision="14">
+		<alter-table name="Test">
+			<drop-col name="bla"/>
+			<create-col name="sequence" type="java.lang.Integer" required="true" default="0"/>
+			<alter-col>
+				<from name="bli" type="java.lang.String" maxLength="500"/>
+				<to name="obs" type="java.lang.String" maxLength="550"/>
+			</alter-col>
+			
+			<insert>
+	   			<col key="name" value="testn" type="java.lang.String"/><col key="description" value="N Test" type="java.lang.String"/><col key="obs" value="observing" type="java.lang.String"/><col key="sequence" value="2" type="java.lang.Integer"/>
+			</insert>
+			<delete>
+				<filter><col key="name" value="test2" type="java.lang.String"/></filter>
+			</delete>
+			<update>
+				<filter><col key="nome" value="test1" type="java.lang.String"/></filter>
+				<to><col key="description" value="First Test Updated" type="java.lang.String"/></to>
+			</update>
+			
+		</alter-table>
+	</update>
+
+	<update revision="16">
+		<drop-table name="Test"/>
+	</update>
+
+
+
+</update-log>

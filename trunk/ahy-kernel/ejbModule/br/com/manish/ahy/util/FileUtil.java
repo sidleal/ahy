@@ -1,0 +1,201 @@
+//  Ahy - A pure java CMS.
+//  Copyright (C) 2010 Sidney Leal (manish.com.br)
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+package br.com.manish.ahy.util;
+
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import br.com.manish.ahy.exception.OopsException;
+
+public final class FileUtil {
+    private static Log log = LogFactory.getLog(FileUtil.class);
+
+    private FileUtil() {
+        super();
+    }
+
+    public static String readFileAsString(String path) {
+        String ret = null;
+
+        try {
+
+            byte[] buffer = new byte[(int) new File(path).length()];
+            BufferedInputStream f = new BufferedInputStream(new FileInputStream(path));
+            f.read(buffer);
+            ret = new String(buffer);
+
+        } catch (IOException e) {
+            throw new OopsException(e, "Error reading: " + path);
+        }
+
+        return ret;
+    }
+
+    public static byte[] readFileAsBytes(String path) {
+
+        byte[] fileArray = null;
+
+        try {
+            File file = new File(path);
+            if (file.length() > Integer.MAX_VALUE) {
+                throw new OopsException("Oversized file :-( can't read it, sorry: " + path);
+            }
+
+            fileArray = new byte[(int) file.length()];
+            DataInputStream dis;
+            dis = new DataInputStream(new FileInputStream(file));
+            dis.readFully(fileArray);
+            dis.close();
+
+        } catch (Exception e) {
+            throw new OopsException(e, "Problems when reading: [" + path + "].");
+        }
+
+        return fileArray;
+    }
+
+    public static byte[] readResourceAsBytes(String path) {
+
+        byte[] fileArray = null;
+
+        try {
+
+            InputStream is = FileUtil.class.getResourceAsStream(path);
+
+            if (is.available() > Integer.MAX_VALUE) {
+            	throw new OopsException("Oversized file :-( can't read it, sorry: " + path);
+            }
+
+            fileArray = new byte[is.available()];
+            is.read(fileArray);
+            is.close();
+
+        } catch (Exception e) {
+        	throw new OopsException(e, "Problems when reading: [" + path + "].");
+        }
+
+        return fileArray;
+    }
+
+    public static void copyFile(String from, String to) {
+        copyFile(from, to, Boolean.FALSE);
+    }
+
+    public static void copyFile(String from, String to, Boolean overwrite) {
+
+        try {
+            File fromFile = new File(from);
+            File toFile = new File(to);
+
+            if (!fromFile.exists()) {
+                throw new IOException("File not found: " + from);
+            }
+            if (!fromFile.isFile()) {
+                throw new IOException("Can't copy directories: " + from);
+            }
+            if (!fromFile.canRead()) {
+                throw new IOException("Can't read file: " + from);
+            }
+
+            if (toFile.isDirectory()) {
+                toFile = new File(toFile, fromFile.getName());
+            }
+
+            if (toFile.exists() && !overwrite) {
+                throw new IOException("File already exists.");
+            } else {
+                String parent = toFile.getParent();
+                if (parent == null) {
+                    parent = System.getProperty("user.dir");
+                }
+                File dir = new File(parent);
+                if (!dir.exists()) {
+                    throw new IOException("Destination directory does not exist: " + parent);
+                }
+                if (dir.isFile()) {
+                    throw new IOException("Destination is not a valid directory: " + parent);
+                }
+                if (!dir.canWrite()) {
+                    throw new IOException("Can't write on destination: " + parent);
+                }
+            }
+
+            FileInputStream fis = null;
+            FileOutputStream fos = null;
+            try {
+
+                fis = new FileInputStream(fromFile);
+                fos = new FileOutputStream(toFile);
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+
+                while ((bytesRead = fis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, bytesRead);
+                }
+
+            } finally {
+                if (from != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        log.error(e);
+                    }
+                }
+                if (to != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        log.error(e);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            throw new OopsException(e, "Problems when copying file.");
+        }
+    }
+
+    public static void removeFile(String path) {
+        try {
+
+            File file = new File(path);
+
+            int i = 0;
+            boolean success = false;
+            while (!success && i < 15) {
+                success = file.delete();
+                Thread.sleep(1000);
+                i++;
+            }
+
+            if (!success) {
+                throw new IOException("Sorry, I can't delete :" + path);
+            }
+
+        } catch (Exception e) {
+            throw new OopsException(e, "Problems when removing file.");
+        }
+    }
+}
