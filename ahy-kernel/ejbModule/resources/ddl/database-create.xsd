@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="dump">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="table" minOccurs="1" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="col" minOccurs="1" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="name" type="xs:string" />
+									<xs:attribute name="type" type="xs:string" />
+									<xs:attribute name="required" type="xs:boolean" />
+									<xs:attribute name="generated" type="xs:boolean" />
+									<xs:attribute name="primaryKey" type="xs:boolean" />
+									<xs:attribute name="foreignKey" type="xs:string" />
+									<xs:attribute name="maxLength" type="xs:string" />
+									<xs:attribute name="default" type="xs:boolean" />
+									<xs:attribute name="unique" type="xs:boolean" />
+								</xs:complexType>
+							</xs:element>
+							
+							<xs:element name="insert" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="col" minOccurs="1" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:attribute name="key" type="xs:string" />
+												<xs:attribute name="value" type="xs:string" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+													
+						</xs:sequence>
+						<xs:attribute name="name" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
