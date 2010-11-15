@@ -14,7 +14,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package br.com.manish.ahy.util;
+package br.com.manish.ahy.kernel.util;
 
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
@@ -28,7 +28,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import br.com.manish.ahy.exception.OopsException;
+import br.com.manish.ahy.kernel.exception.OopsException;
 
 public final class HashUtil {
     private static Log log = LogFactory.getLog(HashUtil.class);

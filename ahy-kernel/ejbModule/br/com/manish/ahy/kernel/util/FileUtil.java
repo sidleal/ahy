@@ -14,7 +14,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package br.com.manish.ahy.util;
+package br.com.manish.ahy.kernel.util;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -27,7 +27,7 @@ import java.io.InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import br.com.manish.ahy.exception.OopsException;
+import br.com.manish.ahy.kernel.exception.OopsException;
 
 public final class FileUtil {
     private static Log log = LogFactory.getLog(FileUtil.class);
