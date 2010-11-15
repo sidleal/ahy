@@ -13,33 +13,12 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    	
-package br.com.manish.ahy.ddl;
 
-import java.util.List;
+package br.com.manish.ahy.kernel;
 
-import javax.sql.DataSource;
+import javax.ejb.Local;
 
-import org.jdom.Element;
-
-public interface Parser {
-
-	Boolean verifyTableExistence(DataSource ds, String table);
-
-	List<String> createTable(DataSource ds, Element el);
-
-	String dropTable(Element el);
-
-	String dropColumn(Element el, String table);
-
-	String addColumn(Element el, String table);
-
-	String alterColumn(Element elFrom, Element elTo, String table);
-
-	String createInsert(Element el, String table);
-
-	String createDelete(Element el, String table);
-
-	String createUpdate(Element elFilter, Element elDump, String table);
+@Local
+public interface BaseEJBLocal {
 
 }

@@ -14,7 +14,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package br.com.manish.ahy.util;
+package br.com.manish.ahy.kernel.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

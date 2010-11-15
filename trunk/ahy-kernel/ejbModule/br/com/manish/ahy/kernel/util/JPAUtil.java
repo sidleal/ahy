@@ -14,7 +14,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package br.com.manish.ahy.util;
+package br.com.manish.ahy.kernel.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,9 +31,9 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
-import br.com.manish.ahy.ddl.Parser;
-import br.com.manish.ahy.ddl.ParserMySQL;
-import br.com.manish.ahy.exception.OopsException;
+import br.com.manish.ahy.kernel.ddl.Parser;
+import br.com.manish.ahy.kernel.ddl.ParserMySQL;
+import br.com.manish.ahy.kernel.exception.OopsException;
 
 public final class JPAUtil {
 	private static Log log = LogFactory.getLog(JPAUtil.class);
@@ -88,8 +88,9 @@ public final class JPAUtil {
 			doc = sb.build(url);
 
 			String dialect = "";
-			Element prop = doc.getRootElement().getChild("persistence-unit")
-					.getChild("properties");
+			Element root = doc.getRootElement();
+			Element persUnit = root.getChild("persistence-unit", root.getNamespace());
+			Element prop = persUnit.getChild("properties", root.getNamespace());
 			for (Element el : (List<Element>) prop.getChildren()) {
 				if (el.getAttributeValue("name").equals("hibernate.dialect")) {
 					dialect = el.getAttributeValue("value");

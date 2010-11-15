@@ -15,7 +15,7 @@
 	  <col name="title" type="java.lang.String" maxLength="250" required="true"/>
 	  <col name="teaser" type="java.lang.String" maxLength="1000"/>
 	  <col name="text" type="java.lang.String" maxLength="8000"/>
-	  <col name="create" type="java.util.Date" required="true"/>
+	  <col name="created" type="java.util.Date" required="true"/>
 	  <col name="published" type="java.util.Date"/>
 	  <col name="shortcut" type="java.lang.String" maxLength="100" required="true"/>
 	  <col name="status" type="java.lang.String" maxLength="3" required="true"/>
@@ -23,7 +23,7 @@
    	  <col name="user_id" type="java.lang.Long" required="true" foreignKey="User.id" />
    	  <col name="previousRevision_id" type="java.lang.Long" foreignKey="Content.id" />
    	  <col name="responseTo_id" type="java.lang.Long" foreignKey="Content.id" />
-   	  <insert><col key="id" value="1"/><col key="title" value="Welcome!"/><col key="teaser" value="Nice too see you."/><col key="teaser" value="This is your first content test. Everything is working good."/><col key="created" value="2010-02-24 11:12:00 -0300"/><col key="published" value="2010-02-24 11:12:00 -0300"/><col key="shortcut" value="welcome"/><col key="status" value="PUB"/><col key="revision" value="1"/><col key="user_id" value="1"/></insert>
+   	  <insert><col key="id" value="1"/><col key="title" value="Welcome!"/><col key="teaser" value="Nice too see you."/><col key="text" value="This is your first content test. Everything is working good."/><col key="created" value="2010-02-24 11:12:00 -0300"/><col key="published" value="2010-02-24 11:12:00 -0300"/><col key="shortcut" value="welcome"/><col key="status" value="PUB"/><col key="revision" value="1"/><col key="user_id" value="1"/></insert>
 	</table>
 	
 	<table name="ContentImage">
@@ -38,9 +38,9 @@
 	<table name="Role">
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
 	  <col name="name" type="java.lang.String" maxLength="100" required="true"/>
-	  <col name="default" type="java.lang.Boolean" required="true"/>
-   	  <insert><col key="id" value="1"/><col key="name" value="Administrators"/><col key="default" value="false"/></insert>
-   	  <insert><col key="id" value="2"/><col key="name" value="Public"/><col key="default" value="true"/></insert>
+	  <col name="isDefault" type="java.lang.Boolean" required="true"/>
+   	  <insert><col key="id" value="1"/><col key="name" value="Administrators"/><col key="isDefault" value="false"/></insert>
+   	  <insert><col key="id" value="2"/><col key="name" value="Public"/><col key="isDefault" value="true"/></insert>
 	</table>
 
 	<table name="UserRole">
@@ -54,7 +54,7 @@
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
 	  <col name="name" type="java.lang.String" maxLength="100" required="true"/>
 	  <col name="description" type="java.lang.String" maxLength="250"/>
-   	  <insert><col key="id" value="1"/><col key="name" value="news"/><col key="name" value="News with Public Access."/></insert>
+   	  <insert><col key="id" value="1"/><col key="name" value="news"/><col key="description" value="News with Public Access."/></insert>
 	</table>
 
 	<table name="RoleContentAccess">
@@ -62,6 +62,13 @@
    	  <col name="contentTag_id" type="java.lang.Long" required="true" foreignKey="ContentTag.id" />
    	  <col name="role_id" type="java.lang.Long" required="true" foreignKey="Role.id" />
    	  <insert><col key="id" value="1"/><col key="contentTag_id" value="1"/><col key="role_id" value="1"/></insert>
-   	  <insert><col key="id" value="1"/><col key="contentTag_id" value="1"/><col key="role_id" value="2"/></insert>
+   	  <insert><col key="id" value="2"/><col key="contentTag_id" value="1"/><col key="role_id" value="2"/></insert>
 	</table>
+
+	<table name="Version">
+	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+   	  <col name="revision" type="java.lang.Integer" required="true" />
+   	  <col name="note" type="java.lang.String" maxLength="1000" />
+	</table>
+
 </dump>

@@ -14,7 +14,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package br.com.manish.ahy.util;
+package br.com.manish.ahy.kernel.util;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -33,7 +33,7 @@ import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import br.com.manish.ahy.exception.OopsException;
+import br.com.manish.ahy.kernel.exception.OopsException;
 
 public final class DAOUtil {
     private static Log log = LogFactory.getLog(DAOUtil.class);
