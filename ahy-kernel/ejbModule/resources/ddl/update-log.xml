@@ -31,7 +31,7 @@
 				<filter><col key="name" value="test2" type="java.lang.String"/></filter>
 			</delete>
 			<update>
-				<filter><col key="nome" value="test1" type="java.lang.String"/></filter>
+				<filter><col key="name" value="test1" type="java.lang.String"/></filter>
 				<to><col key="description" value="First Test Updated" type="java.lang.String"/></to>
 			</update>
 			

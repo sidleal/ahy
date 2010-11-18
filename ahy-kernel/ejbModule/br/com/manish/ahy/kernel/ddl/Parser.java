@@ -27,6 +27,8 @@ public interface Parser {
 	Boolean verifyTableExistence(DataSource ds, String table);
 
 	List<String> createTable(DataSource ds, Element el);
+	
+	List<String> createTables(DataSource ds, Element el);
 
 	String dropTable(Element el);
 
