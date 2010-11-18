@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<datasources>
+   <local-tx-datasource>
+      <jndi-name>ahy-cms-ds</jndi-name>
+
+	  <!-- SQL Server 
+      <connection-url>jdbc:jtds:sqlserver://localhost:1433/ahydb</connection-url>
+      <driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+	  -->
+	  <!-- MySQL -->
+      <connection-url>jdbc:mysql://localhost:3306/ahydb</connection-url>
+      <driver-class>com.mysql.jdbc.Driver</driver-class>
+
+      <user-name>root</user-name>
+      <password></password>
+
+      <!-- The minimum connections in a pool/sub-pool. Pools are lazily constructed on first use -->
+      <min-pool-size>5</min-pool-size>
+
+      <!-- The maximum connections in a pool/sub-pool -->
+      <max-pool-size>20</max-pool-size>
+
+      <!-- The time before an unused connection is destroyed -->
+      <!-- NOTE: This is the check period. It will be destroyed somewhere between 1x and 2x this timeout after last use -->
+      <idle-timeout-minutes>10</idle-timeout-minutes>
+
+			<set-tx-query-timeout/>
+			<query-timeout>300</query-timeout> <!-- maximum of 5 minutes for queries -->
+
+      <!-- Whether to check all statements are closed when the connection is returned to the pool,
+           this is a debugging feature that should be turned off in production -->
+      <track-statements/>
+
+   </local-tx-datasource>
+   
+</datasources>
