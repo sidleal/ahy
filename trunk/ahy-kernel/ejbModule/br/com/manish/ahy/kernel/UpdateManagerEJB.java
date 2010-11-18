@@ -35,7 +35,7 @@ import br.com.manish.ahy.kernel.util.JPAUtil;
 @Stateless
 public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 	public static final String VERSION_ALIAS = "Inception";
-	public static final Integer REVISION = 24;
+	public static final Integer REVISION = 17;
 
 	private Parser parser = JPAUtil.getParser();
 
@@ -118,7 +118,7 @@ public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 
 			Element root = (Element) doc.getRootElement();
 
-			List<String> createSQLList = parser.createTable(getDs(), root);
+			List<String> createSQLList = parser.createTables(getDs(), root);
 
 			for (String command : createSQLList) {
 				DAOUtil.executeSQLCommand(getDs(), command);
@@ -167,7 +167,7 @@ public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 					continue;
 				}
 
-				getLog().info("Updating revisio: " + updRevision);
+				getLog().info("Updating revision: " + updRevision);
 
 				List<String> updateSQLList = new ArrayList<String>();
 
@@ -198,7 +198,7 @@ public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 		String tableName = elTable.getAttributeValue("name");
 		String operationType = elTable.getName();
 
-		getLog().debug("Table: " + tableName + " Operation: " + operationType);
+		getLog().info("Table: " + tableName + " Operation: " + operationType);
 
 		if (operationType.equals("create-table")) {
 			retList.addAll(parser.createTable(getDs(), elTable));

@@ -56,14 +56,23 @@ public class ParserMySQL implements Parser {
     }
 
     @Override
-    public List<String> createTable(DataSource ds, Element el) {
+    public List<String> createTables(DataSource ds, Element el) {
 
         List<String> ret = new ArrayList<String>();
 
         for (Element table : (List<Element>) el.getChildren()) {
-            if (verifyTableExistence(ds, table.getAttributeValue("name"))) {
-                continue;
-            }
+            ret.addAll(createTable(ds, table));
+        }
+
+        return ret;
+    }
+
+    @Override
+    public List<String> createTable(DataSource ds, Element table) {
+
+        List<String> ret = new ArrayList<String>();
+
+        if (!verifyTableExistence(ds, table.getAttributeValue("name"))) {
 
             Map<String, String> typesMap = new HashMap<String, String>();
             String sql = "";
@@ -91,9 +100,7 @@ public class ParserMySQL implements Parser {
                     ret.add(createInsert(insert, table.getAttributeValue("name")));
                 }
             }
-
         }
-
         return ret;
     }
 
