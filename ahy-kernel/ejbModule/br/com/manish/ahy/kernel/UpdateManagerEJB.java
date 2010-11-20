@@ -34,15 +34,15 @@ import br.com.manish.ahy.kernel.util.JPAUtil;
 
 @Stateless
 public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
-	public static final String VERSION_ALIAS = "Inception";
+	public static final Integer VERSION = 1;
 	public static final Integer REVISION = 17;
-
+    
 	private Parser parser = JPAUtil.getParser();
 
 	@Override
 	public String getVersion() {
 		verifyDatabase();
-		return VERSION_ALIAS + "." + REVISION;
+		return VERSION + "." + REVISION;
 	}
 
 	private void verifyDatabase() {
@@ -69,17 +69,22 @@ public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 
 				} else {
 					Version lastVersion = getDatabaseLastVersion();
-					if (lastVersion.getRevision() < REVISION) {
-						getLog().info("Database outdated, applying updates.");
-						update();
-					} else if (lastVersion.getRevision() > REVISION) {
-						throw new OopsException(
-								"Hummm.. database version is newer than program version, something is wrong.");
+					
+					if (lastVersion.getMajor() < VERSION) {
+					    getLog().info("Great! You have a new major version! Database outdated, applying updates.");
+                        update();
 					} else {
-						getLog().info(
-								"Database updated, same version as program. Good Job!");
+    					if (lastVersion.getRevision() < REVISION) {
+    						getLog().info("Database outdated, applying updates.");
+    						update();
+    					} else if (lastVersion.getRevision() > REVISION) {
+    						throw new OopsException(
+    								"Hummm.. database version is newer than program version, something is wrong.");
+    					} else {
+    						getLog().info(
+    								"Database updated, same version as program. Good Job!");
+    					}
 					}
-
 				}
 
 			}
@@ -92,7 +97,7 @@ public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 
 	private List<Version> getDatabaseVersionList() {
 		Query query = getEm()
-				.createQuery("from Version order by revision desc");
+				.createQuery("from Version order by major, revision desc");
 		List<Version> list = query.getResultList();
 		return list;
 	}
@@ -124,7 +129,7 @@ public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 				DAOUtil.executeSQLCommand(getDs(), command);
 			}
 
-			getEm().persist(new Version(REVISION, "First database creation"));
+			getEm().persist(new Version(VERSION, REVISION, "First database creation"));
 
 			getLog().info("Creating database - End.");
 
@@ -180,7 +185,7 @@ public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
 					DAOUtil.executeSQLCommand(getDs(), command);
 				}
 
-				getEm().persist(new Version(REVISION, "Updated with honor!"));
+				getEm().persist(new Version(VERSION, REVISION, "Updated with honor!"));
 
 			}
 			getLog().info("Updating database - End.");
