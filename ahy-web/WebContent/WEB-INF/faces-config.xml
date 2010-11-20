@@ -7,7 +7,23 @@
   <managed-bean-class>br.com.manish.ahy.web.LayoutJSF</managed-bean-class>
   <managed-bean-scope>session</managed-bean-scope>
  </managed-bean>
- 
+  <managed-bean>
+  <managed-bean-name>loginJSF</managed-bean-name>
+  <managed-bean-class>br.com.manish.ahy.web.LoginJSF</managed-bean-class>
+  <managed-bean-scope>session</managed-bean-scope>
+ </managed-bean>
+
+  <navigation-rule>
+  <navigation-case>
+   <from-outcome>login</from-outcome>
+   <to-view-id>/login.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>main</from-outcome>
+   <to-view-id>/main.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
+  </navigation-rule>
  <application>
   <view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
   <locale-config>
@@ -15,6 +31,9 @@
    <supported-locale>pt_BR</supported-locale>
   </locale-config>
   <message-bundle>resources.ahy-cms</message-bundle>
- </application>
+  </application>
+  <lifecycle>
+	  <phase-listener>br.com.manish.ahy.web.PermissionChecker</phase-listener>
+  </lifecycle>  
  
 </faces-config>

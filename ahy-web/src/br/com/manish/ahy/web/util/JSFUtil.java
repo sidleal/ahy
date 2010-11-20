@@ -16,8 +16,6 @@
 
 package br.com.manish.ahy.web.util;
 
-import java.io.Serializable;
-
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
@@ -57,6 +55,8 @@ public class JSFUtil {
 		String ret = "";
 		
 		//TODO: internationalization here.
+		ret = msg;
+		
 		if (items != null) {
 			for (int i = 0; i < items.length; i++) {
 				ret = msg.replaceAll("\\{"+ i + "\\}", items[i].toString());

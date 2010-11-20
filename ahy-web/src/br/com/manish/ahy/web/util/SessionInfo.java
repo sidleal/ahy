@@ -25,6 +25,7 @@ public class SessionInfo implements Serializable {
 
 	private String version;
 	private User user;
+	private String forwardAfterLogin;
 
 	public String getUserEmail() {
 	    String ret = null;
@@ -48,6 +49,14 @@ public class SessionInfo implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public String getForwardAfterLogin() {
+        return forwardAfterLogin;
+    }
+
+    public void setForwardAfterLogin(String forwardAfterLogin) {
+        this.forwardAfterLogin = forwardAfterLogin;
     }
 
 }
