@@ -7,7 +7,7 @@
 	  <col name="name" type="java.lang.String" maxLength="250" required="true"/>
 	  <col name="language" type="java.lang.String" maxLength="10" />
 	  <col name="status" type="java.lang.String" maxLength="3" required="true"/>
-   	  <insert><col key="id" value="1"/><col key="email" value="adm@adm"/><col key="password" value="FCEF631EAB0BE0F69D940E737B136E0CBCF4F6F1DE81F50822862002655AF92E"/><col key="name" value="Administrator"/><col key="language" value="en-US"/><col key="status" value="ACT"/></insert>
+   	  <insert><col key="id" value="1"/><col key="email" value="adm@ahy"/><col key="password" value="E03D44D71A489A7C37F89E9A221A283456EE8DE7CCEE9F9D3E490DDC58B75E35"/><col key="name" value="Administrator"/><col key="language" value="en-US"/><col key="status" value="ACT"/></insert>
 	</table>
 
 	<table name="Content">
