@@ -67,6 +67,7 @@
 
 	<table name="Version">
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+   	  <col name="major" type="java.lang.Integer" required="true"/>
    	  <col name="revision" type="java.lang.Integer" required="true" />
    	  <col name="note" type="java.lang.String" maxLength="1000" />
 	</table>

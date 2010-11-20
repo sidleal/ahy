@@ -31,6 +31,7 @@ public class Version extends BaseEntity {
     @GeneratedValue
     private Long id;
     
+    private Integer major;
     private Integer revision;
     private String note;
     
@@ -38,7 +39,8 @@ public class Version extends BaseEntity {
     	
     }
     
-    public Version(Integer revision, String note) {
+    public Version(Integer major, Integer revision, String note) {
+        this.major = major;
     	this.revision = revision;
     	this.note = note;
     }
@@ -79,4 +81,10 @@ public class Version extends BaseEntity {
 	public void setNote(String note) {
 		this.note = note;
 	}
+    public Integer getMajor() {
+        return major;
+    }
+    public void setMajor(Integer major) {
+        this.major = major;
+    }
 }
