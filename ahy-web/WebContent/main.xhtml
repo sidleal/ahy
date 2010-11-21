@@ -11,7 +11,13 @@
 	</ui:define>
 	
 	<ui:define name="left">
-		<h:outputText value="Here is the menu's place."/>
+		<h:form id="frmMenu">
+			<h:panelGrid columns="1">
+				<h:outputText value="Here is the menu's place."/>
+				<h:commandLink action="privateTest">Private Content</h:commandLink>
+				<h:commandLink action="#{loginJSF.logoff}">Logoff</h:commandLink>
+			</h:panelGrid>
+		</h:form>
 	</ui:define>
 
 	<ui:define name="content">
