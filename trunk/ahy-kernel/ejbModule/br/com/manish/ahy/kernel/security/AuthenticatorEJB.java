@@ -44,10 +44,10 @@ public class AuthenticatorEJB extends BaseEJB implements AuthenticatorEJBLocal {
             } else {
                 throw new OopsException("Invalid password");
             }
-        
+        } catch (OopsException oe) {
+            throw oe;
         } catch (NoResultException nre) {
             throw new OopsException("User not found.");
-
         } catch (Exception e) {
             fireOopsException(e, "Error when authenticating the user.");
         }
