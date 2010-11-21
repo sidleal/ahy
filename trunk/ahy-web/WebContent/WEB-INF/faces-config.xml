@@ -23,6 +23,11 @@
    <to-view-id>/main.xhtml</to-view-id>
    <redirect/>
   </navigation-case>
+  <navigation-case>
+   <from-outcome>privateTest</from-outcome>
+   <to-view-id>/private.xhtml</to-view-id>
+   <redirect/>
+  </navigation-case>
   </navigation-rule>
  <application>
   <view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
