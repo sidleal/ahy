@@ -17,6 +17,8 @@
 package br.com.manish.ahy.web;
 
 import javax.faces.application.ViewHandler;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -25,7 +27,10 @@ import javax.servlet.http.HttpSession;
 import br.com.manish.ahy.kernel.security.AuthenticatorEJBLocal;
 import br.com.manish.ahy.kernel.security.User;
 
+@ManagedBean
+@SessionScoped
 public class LoginJSF extends BaseJSF {
+	private static final long serialVersionUID = 1L;
 
     private User user = new User();
     
