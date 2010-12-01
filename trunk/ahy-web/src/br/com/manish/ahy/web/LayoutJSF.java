@@ -16,11 +16,16 @@
 
 package br.com.manish.ahy.web;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
 import br.com.manish.ahy.kernel.UpdateManagerEJBLocal;
 import br.com.manish.ahy.kernel.exception.OopsException;
 
+@ManagedBean
+@SessionScoped
 public class LayoutJSF extends BaseJSF {
-
+	private static final long serialVersionUID = 1L;
 	
     public String getVersion() {
         String version = getSessionInfo().getVersion();

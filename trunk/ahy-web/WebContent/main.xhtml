@@ -1,37 +1,55 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:c="http://java.sun.com/jstl/core">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:h="http://java.sun.com/jsf/html" 
+		xmlns:ui="http://java.sun.com/jsf/facelets"
+			xmlns:f="http://java.sun.com/jsf/core">
 
-<ui:composition template="/layout/default.xhtml">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>
+		<ui:insert name="title">Ahy - A Pure Java CMS</ui:insert>
+	</title>
+</h:head>
 
-	<ui:define name="title">Ahy - A Pure Java CMS</ui:define>
-
-	<ui:define name="header">
-		<h:outputText value="Maybe a image..."/>
-	</ui:define>
-	
-	<ui:define name="left">
-		<h:form id="frmMenu">
-			<h:panelGrid columns="1">
-				<h:outputText value="Here is the menu's place."/>
-				<h:commandLink action="privateTest">Private Content</h:commandLink>
-				<h:commandLink action="#{loginJSF.logoff}">Logoff</h:commandLink>
-			</h:panelGrid>
-		</h:form>
-	</ui:define>
-
-	<ui:define name="content">
-		<h:outputText value="The content!! where all magic happens."/>
-	</ui:define>
-
-	<ui:define name="right">
-		<h:outputText value="Humm.. Ads?"/>		
-	</ui:define>
-	
-	<ui:define name="footer">
-		<h:outputText value="Finally the footer."/>		
-	</ui:define>
-	
-</ui:composition>
-
+<h:body>
+<h:outputStylesheet library="css" name="default.css" target="body"/>
+<f:view>
+	<table border="1">
+		<tr>
+			<td colspan="3">
+				<ui:insert name="header">Top Block</ui:insert>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<ui:insert name="left">
+					<h:form id="frmMenu">
+						<h:panelGrid columns="1">
+							<h:outputText value="Here is the menu's place."/>
+							<h:commandLink action="private">Private Content</h:commandLink>
+							<h:commandLink action="#{loginJSF.logoff}">Logoff</h:commandLink>
+						</h:panelGrid>
+					</h:form>
+				</ui:insert>
+			</td>
+			<td>
+				<h:messages/><br/>
+				<ui:insert name="content">Content Block</ui:insert>
+			</td>
+			<td>
+				<ui:insert name="right">Right Block</ui:insert>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<ui:insert name="footer">Bottom Block</ui:insert>
+				<br/>
+				<h:outputText value="Powered by " />
+				<h:outputLink target="_blank" value="http://code.google.com/p/ahy"><h:outputText value="Ahy - CMS"/></h:outputLink>
+				<h:outputText value=" ( Version: #{layoutJSF.version} )"/>				
+			</td>
+		</tr>		
+	</table>
+</f:view>
+</h:body>
 </html>

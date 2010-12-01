@@ -16,6 +16,8 @@
 
 package br.com.manish.ahy.web;
 
+import java.io.Serializable;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
@@ -27,8 +29,10 @@ import br.com.manish.ahy.kernel.exception.OopsException;
 import br.com.manish.ahy.web.util.JSFUtil;
 import br.com.manish.ahy.web.util.SessionInfo;
 
-public abstract class BaseJSF {
-    private Log log = LogFactory.getLog(this.getClass());
+public abstract class BaseJSF implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
+	private Log log = LogFactory.getLog(this.getClass());
 
     protected <T extends BaseEJBLocal> T getEJB(Class<? extends BaseEJBLocal> localInterface) {
         T ret = EJBFactory.getInstance().getEJB(localInterface);
