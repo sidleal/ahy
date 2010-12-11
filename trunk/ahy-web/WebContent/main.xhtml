@@ -14,14 +14,14 @@
 <h:body>
 <h:outputStylesheet library="css" name="default.css" target="body"/>
 <f:view>
-	<table border="1">
+	<table border="1" width="100%">
 		<tr>
 			<td colspan="3">
 				<ui:insert name="header">Top Block</ui:insert>
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td width="15%">
 				<ui:insert name="left">
 					<h:form id="frmMenu">
 						<h:panelGrid columns="1">
@@ -32,11 +32,11 @@
 					</h:form>
 				</ui:insert>
 			</td>
-			<td>
+			<td width="70%">
 				<h:messages/><br/>
 				<ui:insert name="content">Content Block</ui:insert>
 			</td>
-			<td>
+			<td width="15%">
 				<ui:insert name="right">Right Block</ui:insert>
 			</td>
 		</tr>

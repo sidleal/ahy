@@ -19,8 +19,44 @@
 
  <servlet-mapping>
   <servlet-name>Faces Servlet</servlet-name>
+  <url-pattern>*.jahy</url-pattern>
+ </servlet-mapping>
+
+ <servlet>
+  <servlet-name>ContentResource Servlet</servlet-name>
+  <servlet-class>br.com.manish.ahy.web.ContentResourceServlet</servlet-class>
+ </servlet>
+
+ <servlet-mapping>
+  <servlet-name>ContentResource Servlet</servlet-name>
+  <url-pattern>*.png</url-pattern>
+ </servlet-mapping>
+ 
+ <servlet-mapping>
+  <servlet-name>ContentResource Servlet</servlet-name>
+  <url-pattern>*.jpg</url-pattern>
+ </servlet-mapping>
+ 
+ <servlet-mapping>
+  <servlet-name>ContentResource Servlet</servlet-name>
+  <url-pattern>*.gif</url-pattern>
+ </servlet-mapping>
+ 
+ <servlet-mapping>
+  <servlet-name>ContentResource Servlet</servlet-name>
+  <url-pattern>*.css</url-pattern>
+ </servlet-mapping>
+
+ <servlet>
+  <servlet-name>Content Servlet</servlet-name>
+  <servlet-class>br.com.manish.ahy.web.ContentServlet</servlet-class>
+ </servlet>
+
+ <servlet-mapping>
+  <servlet-name>Content Servlet</servlet-name>
   <url-pattern>*.ahy</url-pattern>
  </servlet-mapping>
+
 
  <session-config>
   <session-timeout>30</session-timeout> 
