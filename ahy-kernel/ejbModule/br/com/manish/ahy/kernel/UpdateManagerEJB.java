@@ -29,223 +29,198 @@ import org.jdom.input.SAXBuilder;
 
 import br.com.manish.ahy.kernel.ddl.Parser;
 import br.com.manish.ahy.kernel.exception.OopsException;
-import br.com.manish.ahy.kernel.util.DAOUtil;
 import br.com.manish.ahy.kernel.util.JPAUtil;
 
 @Stateless
 public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
-	public static final Integer VERSION = 1;
-	public static final Integer REVISION = 17;
-    
-	private Parser parser = JPAUtil.getParser();
+    public static final Integer VERSION = 1;
+    public static final Integer REVISION = 17;
 
-	@Override
-	public String getVersion() {
-		verifyDatabase();
-		return VERSION + "." + REVISION;
-	}
+    private Parser parser = JPAUtil.getParser();
 
-	private void verifyDatabase() {
-		try {
+    @Override
+    public String getVersion() {
+        verifyDatabase();
+        return VERSION + "." + REVISION;
+    }
 
-			getLog().info("Verifying Database version.");
+    private void verifyDatabase() {
+        try {
 
-			boolean tableExists = parser.verifyTableExistence(getDs(),
-					"Version");
+            getLog().info("Verifying Database version.");
 
-			if (!tableExists) { // new
-				getLog().info(
-						"New installation detected, will create all tables.");
-				create();
+            boolean tableExists = parser.verifyTableExistence(getDs(), "Version");
 
-			} else {
+            if (!tableExists) { // new
+                getLog().info("New installation detected, will create all tables.");
+                create();
 
-				List<Version> versionList = getDatabaseVersionList();
+            } else {
 
-				if (versionList.size() <= 0) {
-					getLog().info(
-							"Probably something goes wrong on first installation, trying to recreate all tables.");
-					create();
+                List<Version> versionList = getDatabaseVersionList();
 
-				} else {
-					Version lastVersion = getDatabaseLastVersion();
-					
-					if (lastVersion.getMajor() < VERSION) {
-					    getLog().info("Great! You have a new major version! Database outdated, applying updates.");
+                if (versionList.size() <= 0) {
+                    getLog().info("Probably something goes wrong on first installation, trying to recreate all tables.");
+                    create();
+
+                } else {
+                    Version lastVersion = getDatabaseLastVersion();
+
+                    if (lastVersion.getMajor() < VERSION) {
+                        getLog().info("Great! You have a new major version! Database outdated, applying updates.");
                         update();
-					} else {
-    					if (lastVersion.getRevision() < REVISION) {
-    						getLog().info("Database outdated, applying updates.");
-    						update();
-    					} else if (lastVersion.getRevision() > REVISION) {
-    						throw new OopsException(
-    								"Hummm.. database version is newer than program version, something is wrong.");
-    					} else {
-    						getLog().info(
-    								"Database updated, same version as program. Good Job!");
-    					}
-					}
-				}
+                    } else {
+                        if (lastVersion.getRevision() < REVISION) {
+                            getLog().info("Database outdated, applying updates.");
+                            update();
+                        } else if (lastVersion.getRevision() > REVISION) {
+                            throw new OopsException(
+                                    "Hummm.. database version is newer than program version, something is wrong.");
+                        } else {
+                            getLog().info("Database updated, same version as program. Good Job!");
+                        }
+                    }
+                }
 
-			}
+            }
 
-		} catch (Exception e) {
-			throw fireOopsException(e,
-					"Error on checking/updating database version. This is not good.");
-		}
-	}
+        } catch (Exception e) {
+            throw fireOopsException(e, "Error on checking/updating database version. This is not good.");
+        }
+    }
 
-	private List<Version> getDatabaseVersionList() {
-		Query query = getEm()
-				.createQuery("from Version order by major, revision desc");
-		List<Version> list = query.getResultList();
-		return list;
-	}
+    private List<Version> getDatabaseVersionList() {
+        Query query = getEm().createQuery("from Version order by major, revision desc");
+        List<Version> list = query.getResultList();
+        return list;
+    }
 
-	private Version getDatabaseLastVersion() {
-		Version ret = null;
-		List<Version> list = getDatabaseVersionList();
-		if (list.size() > 0) {
-			ret = list.get(0);
-		}
-		return ret;
-	}
+    private Version getDatabaseLastVersion() {
+        Version ret = null;
+        List<Version> list = getDatabaseVersionList();
+        if (list.size() > 0) {
+            ret = list.get(0);
+        }
+        return ret;
+    }
 
-	private void create() {
-		try {
-			getLog().info("Creating database - Begin.");
+    private void create() {
+        try {
+            getLog().info("Creating database - Begin.");
 
-			SAXBuilder sb = new SAXBuilder();
+            SAXBuilder sb = new SAXBuilder();
 
-			URL url = UpdateManagerEJB.class
-					.getResource("/resources/ddl/database-create.xml");
-			Document doc = sb.build(url);
+            URL url = UpdateManagerEJB.class.getResource("/resources/ddl/database-create.xml");
+            Document doc = sb.build(url);
 
-			Element root = (Element) doc.getRootElement();
+            Element root = (Element) doc.getRootElement();
 
-			List<String> createSQLList = parser.createTables(getDs(), root);
+            parser.createTables(getDs(), root);
 
-			for (String command : createSQLList) {
-				DAOUtil.executeSQLCommand(getDs(), command);
-			}
+            getEm().persist(new Version(VERSION, REVISION, "First database creation"));
 
-			getEm().persist(new Version(VERSION, REVISION, "First database creation"));
+            getLog().info("Creating database - End.");
 
-			getLog().info("Creating database - End.");
+        } catch (Exception e) {
+            throw fireOopsException(e, "Very bad: a error when creating database tables, sorry.");
+        }
 
-		} catch (Exception e) {
-			throw fireOopsException(e,
-					"Very bad: a error when creating database tables, sorry.");
-		}
+    }
 
-	}
+    private void update() {
+        try {
 
-	private void update() {
-		try {
+            getLog().info("Updating database - Begin.");
 
-			getLog().info("Updating database - Begin.");
+            SAXBuilder sb = new SAXBuilder();
+            URL url = UpdateManagerEJB.class.getResource("/resources/ddl/update-log.xml");
+            Document doc = sb.build(url);
 
-			SAXBuilder sb = new SAXBuilder();
-			URL url = UpdateManagerEJB.class
-					.getResource("/resources/ddl/update-log.xml");
-			Document doc = sb.build(url);
+            Integer baseRevision = Integer.valueOf(doc.getRootElement().getAttributeValue("baseRevision"));
+            Version dataBaseVersion = getDatabaseLastVersion();
 
-			Integer baseRevision = Integer.valueOf(doc.getRootElement()
-					.getAttributeValue("baseRevision"));
-			Version dataBaseVersion = getDatabaseLastVersion();
+            if (dataBaseVersion.getRevision() < baseRevision) {
+                throw new OopsException(
+                        "Man, this database is so old. This version needs at least revision: {0}, but database revision is: {1}",
+                        baseRevision, dataBaseVersion.getRevision());
+            }
 
-			if (dataBaseVersion.getRevision() < baseRevision) {
-				throw new OopsException(
-						"Man, this database is so old. This version needs at least revision: {0}, but database revision is: {1}",
-						baseRevision, dataBaseVersion.getRevision());
-			}
+            for (Element elUpdate : (List<Element>) doc.getRootElement().getChildren()) {
+                Integer updRevision = Integer.valueOf(elUpdate.getAttributeValue("revision"));
 
-			for (Element elUpdate : (List<Element>) doc.getRootElement()
-					.getChildren()) {
-				Integer updRevision = Integer.valueOf(elUpdate
-						.getAttributeValue("revision"));
+                if (updRevision > REVISION) {
+                    break;
+                }
+                if (updRevision <= dataBaseVersion.getRevision()) {
+                    continue;
+                }
 
-				if (updRevision > REVISION) {
-					break;
-				}
-				if (updRevision <= dataBaseVersion.getRevision()) {
-					continue;
-				}
+                getLog().info("Updating revision: " + updRevision);
 
-				getLog().info("Updating revision: " + updRevision);
+                for (Element elTable : (List<Element>) elUpdate.getChildren()) {
+                    updateTable(elTable);
 
-				List<String> updateSQLList = new ArrayList<String>();
+                }
 
-				for (Element elTable : (List<Element>) elUpdate.getChildren()) {
-					updateSQLList.addAll(updateTable(elTable));
+                getEm().persist(new Version(VERSION, REVISION, "Updated with honor!"));
 
-				}
+            }
+            getLog().info("Updating database - End.");
 
-				for (String command : updateSQLList) {
-					DAOUtil.executeSQLCommand(getDs(), command);
-				}
+        } catch (Exception e) {
+            throw fireOopsException(e, "Sorry to say that, but a error ocurred when updating database.");
+        }
 
-				getEm().persist(new Version(VERSION, REVISION, "Updated with honor!"));
+    }
 
-			}
-			getLog().info("Updating database - End.");
+    private List<String> updateTable(Element elTable) {
+        List<String> retList = new ArrayList<String>();
 
-		} catch (Exception e) {
-			throw fireOopsException(e,
-					"Sorry to say that, but a error ocurred when updating database.");
-		}
+        String tableName = elTable.getAttributeValue("name");
+        String operationType = elTable.getName();
 
-	}
+        getLog().info("Table: " + tableName + " Operation: " + operationType);
 
-	private List<String> updateTable(Element elTable) {
-		List<String> retList = new ArrayList<String>();
+        if (operationType.equals("create-table")) {
+            parser.createTable(getDs(), elTable);
 
-		String tableName = elTable.getAttributeValue("name");
-		String operationType = elTable.getName();
+        } else if (operationType.equals("drop-table")) {
+            parser.dropTable(getDs(), elTable);
 
-		getLog().info("Table: " + tableName + " Operation: " + operationType);
+        } else if (operationType.equals("alter-table")) {
 
-		if (operationType.equals("create-table")) {
-			retList.addAll(parser.createTable(getDs(), elTable));
+            for (Element elUnit : (List<Element>) elTable.getChildren()) {
 
-		} else if (operationType.equals("drop-table")) {
-			retList.add(parser.dropTable(elTable));
+                String unitType = elUnit.getName();
 
-		} else if (operationType.equals("alter-table")) {
+                if (unitType.equals("drop-col")) {
+                    parser.dropColumn(getDs(), elUnit, tableName);
 
-			for (Element elUnit : (List<Element>) elTable.getChildren()) {
+                } else if (unitType.equals("create-col")) {
+                    parser.addColumn(getDs(), elUnit, tableName);
 
-				String unitType = elUnit.getName();
+                } else if (unitType.equals("alter-col")) {
+                    Element elFrom = elUnit.getChild("from");
+                    Element elTo = elUnit.getChild("to");
+                    parser.alterColumn(getDs(), elFrom, elTo, tableName);
 
-				if (unitType.equals("drop-col")) {
-					retList.add(parser.dropColumn(elUnit, tableName));
+                } else if (unitType.equals("insert")) {
+                    parser.insertRow(getDs(), elUnit, tableName);
 
-				} else if (unitType.equals("create-col")) {
-					retList.add(parser.addColumn(elUnit, tableName));
+                } else if (unitType.equals("delete")) {
+                    Element elFilter = elUnit.getChild("filter");
+                    parser.deleteRow(getDs(), elFilter, tableName);
 
-				} else if (unitType.equals("alter-col")) {
-					Element elFrom = elUnit.getChild("from");
-					Element elTo = elUnit.getChild("to");
-					retList.add(parser.alterColumn(elFrom, elTo, tableName));
+                } else if (unitType.equals("update")) {
+                    Element elFilter = elUnit.getChild("filter");
+                    Element elDump = elUnit.getChild("to");
+                    parser.updateRow(getDs(), elFilter, elDump, tableName);
+                }
+            }
 
-				} else if (unitType.equals("insert")) {
-					retList.add(parser.createInsert(elUnit, tableName));
+        }
 
-				} else if (unitType.equals("delete")) {
-					Element elFilter = elUnit.getChild("filter");
-					retList.add(parser.createDelete(elFilter, tableName));
-
-				} else if (unitType.equals("update")) {
-					Element elFilter = elUnit.getChild("filter");
-					Element elDump = elUnit.getChild("to");
-					retList.add(parser
-							.createUpdate(elFilter, elDump, tableName));
-				}
-			}
-
-		}
-
-		return retList;
-	}
+        return retList;
+    }
 
 }

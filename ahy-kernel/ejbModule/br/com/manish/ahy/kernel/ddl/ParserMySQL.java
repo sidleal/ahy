@@ -16,7 +16,6 @@
 
 package br.com.manish.ahy.kernel.ddl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.jdom.Element;
 
 import br.com.manish.ahy.kernel.exception.OopsException;
 import br.com.manish.ahy.kernel.util.DAOUtil;
-import br.com.manish.ahy.kernel.util.JPAUtil;
 import br.com.manish.ahy.kernel.util.TextUtil;
 
 public class ParserMySQL implements Parser {
@@ -51,26 +49,26 @@ public class ParserMySQL implements Parser {
     @Override
     public Boolean verifyTableExistence(DataSource ds, String table) {
         String sql = "SHOW TABLES LIKE '" + table + "'";
-        String result = DAOUtil.executeSingleResultSQLQuery(ds, sql);
+        DAOUtil dao = new DAOUtil(ds);
+        String result = dao.executeSQLQuerySingleResult(sql);
+        dao.releaseConnection();
         return result != null;
     }
 
     @Override
-    public List<String> createTables(DataSource ds, Element el) {
+    public void createTables(DataSource ds, Element el) {
 
-        List<String> ret = new ArrayList<String>();
+        log.debug("createTables");
 
         for (Element table : (List<Element>) el.getChildren()) {
-            ret.addAll(createTable(ds, table));
+            createTable(ds, table);
         }
-
-        return ret;
     }
 
     @Override
-    public List<String> createTable(DataSource ds, Element table) {
+    public void createTable(DataSource ds, Element table) {
 
-        List<String> ret = new ArrayList<String>();
+        DAOUtil dao = new DAOUtil(ds);
 
         if (!verifyTableExistence(ds, table.getAttributeValue("name"))) {
 
@@ -84,63 +82,94 @@ public class ParserMySQL implements Parser {
                 }
             }
             sql = sql.substring(0, sql.length() - 2);
-            sql += ");";
+            sql += ") ENGINE = InnoDB;";
 
-            ret.add(sql);
+            dao.executeSQLCommand(sql);
 
             for (Element insert : (List<Element>) table.getChildren()) {
                 if (insert.getName().equals("insert")) {
                     for (Element col : (List<Element>) insert.getChildren()) {
                         if (typesMap.get(col.getAttributeValue("key")) == null) {
-                            throw new OopsException("It seems that you have a typo error on xml, can't find column [ "
-                                    + col.getAttributeValue("key") + " ] in [" + table.getAttributeValue("name") + "]");
+                            throw new OopsException(
+                                    "It seems that you have a spelling error on xml, can't find column [ "
+                                            + col.getAttributeValue("key") + " ] in ["
+                                            + table.getAttributeValue("name") + "]");
                         }
                         col.setAttribute("type", typesMap.get(col.getAttributeValue("key")));
                     }
-                    ret.add(createInsert(insert, table.getAttributeValue("name")));
+                    insertRow(ds, insert, table.getAttributeValue("name"));
                 }
             }
         }
-        return ret;
+        dao.releaseConnection();
     }
 
     @Override
-    public String createInsert(Element el, String table) {
+    public void insertRow(DataSource ds, Element el, String table) {
+
+        DAOUtil dao = new DAOUtil(ds);
+
         String sql = "";
         sql += "INSERT INTO " + table + " (";
         String values = "";
 
         for (Element col : (List<Element>) el.getChildren()) {
             sql += col.getAttributeValue("key") + ", ";
-            values += formatValueForInsert(col) + ", ";
+            values += "?, ";
         }
 
         sql = sql.substring(0, sql.length() - 2);
         values = values.substring(0, values.length() - 2);
 
         sql += ") VALUES (" + values + ");";
-        return sql;
+
+        dao.prepareStatement(sql);
+        
+        for (Element col : (List<Element>) el.getChildren()) {
+            String type = col.getAttributeValue("type");
+            String value = getColValue(col);
+            dao.addPreparedValue(value, type);
+        }
+        
+        dao.executePreparedStatement();
+
+        dao.releaseConnection();
     }
 
     @Override
-    public String createDelete(Element elFilter, String table) {
+    public void deleteRow(DataSource ds, Element elFilter, String table) {
+
+        DAOUtil dao = new DAOUtil(ds);
+
         String sql = "";
         sql += "DELETE FROM " + table;
         sql += " WHERE ";
         for (Element col : (List<Element>) elFilter.getChildren()) {
-            sql += col.getAttributeValue("key") + " = " + formatValueForInsert(col) + " AND ";
+            sql += col.getAttributeValue("key") + " = ? AND ";
         }
         sql = sql.substring(0, sql.length() - 5);
         sql += ";";
-        return sql;
+
+        dao.prepareStatement(sql);
+
+        for (Element col : (List<Element>) elFilter.getChildren()) {
+            String type = col.getAttributeValue("type");
+            String value = getColValue(col);
+            dao.addPreparedValue(value, type);
+        }
+        
+        dao.releaseConnection();
     }
 
     @Override
-    public String createUpdate(Element elFilter, Element elDump, String table) {
+    public void updateRow(DataSource ds, Element elFilter, Element elDump, String table) {
+
+        DAOUtil dao = new DAOUtil(ds);
+
         String sql = "";
         sql += "UPDATE " + table + " SET ";
         for (Element col : (List<Element>) elDump.getChildren()) {
-            sql += col.getAttributeValue("key") + " = " + formatValueForInsert(col) + ", ";
+            sql += col.getAttributeValue("key") + " = ?, ";
         }
         sql = sql.substring(0, sql.length() - 2);
 
@@ -148,15 +177,41 @@ public class ParserMySQL implements Parser {
             sql += " WHERE ";
 
             for (Element col : (List<Element>) elFilter.getChildren()) {
-                sql += col.getAttributeValue("key") + " = " + formatValueForInsert(col) + " AND ";
+                sql += col.getAttributeValue("key") + " = ? AND ";
             }
             sql = sql.substring(0, sql.length() - 5);
         }
         sql += ";";
-        return sql;
+
+        dao.prepareStatement(sql);
+        
+        for (Element col : (List<Element>) elDump.getChildren()) {
+            String type = col.getAttributeValue("type");
+            String value = getColValue(col);
+            dao.addPreparedValue(value, type);
+        }   
+        
+        for (Element col : (List<Element>) elFilter.getChildren()) {
+            String type = col.getAttributeValue("type");
+            String value = getColValue(col);
+            dao.addPreparedValue(value, type);
+        }        
+        
+        dao.executePreparedStatement();
+
+        dao.releaseConnection();
+    }
+
+    private String getColValue(Element col) {
+        String value = col.getAttributeValue("value");
+        if (value == null) {
+            value = col.getText();
+        }
+        return value;
     }
 
     private String createColumn(Element el, String table) {
+
         String sql = "";
         sql += el.getAttributeValue("name") + " ";
         sql += dataTypes.get(el.getAttributeValue("type"));
@@ -190,22 +245,26 @@ public class ParserMySQL implements Parser {
             sql += "UNIQUE uq_" + TextUtil.tinyFirstLetter(table) + el.getAttributeValue("name") + " ("
                     + el.getAttributeValue("name") + "), ";
         }
+
         return sql;
+
     }
 
     private String formatValueForInsert(Element el) {
         String ret = "";
         String type = el.getAttributeValue("type");
         String value = el.getAttributeValue("value");
+        
         if (type.equals("java.lang.String")) {
             ret = "'" + value + "'";
+            
         } else if (type.equals("java.math.BigDecimal")) {
             ret = value.replaceAll(",", ".");
+            
         } else if (type.equals("java.util.Date")) {
             // SELECT CONVERT_TZ('2004-01-01 12:00:00','+00:00','+10:00');
             ret = "STR_TO_DATE('" + value.substring(0, 19) + "', '%Y-%m-%d %H:%i:%s')";
-        } else if (type.equals("java.sql.Blob")) {
-            ret = JPAUtil.BLOB_BATCH_PREFIX + value;
+
         } else {
             ret = value;
         }
@@ -213,28 +272,42 @@ public class ParserMySQL implements Parser {
     }
 
     @Override
-    public String dropTable(Element el) {
+    public void dropTable(DataSource ds, Element el) {
+
+        DAOUtil dao = new DAOUtil(ds);
+
         String sql = "";
         sql += "DROP TABLE ";
         sql += el.getAttributeValue("name");
         sql += ";";
 
-        return sql;
+        dao.executeSQLCommand(sql);
+
+        dao.releaseConnection();
+
     }
 
     @Override
-    public String dropColumn(Element el, String table) {
+    public void dropColumn(DataSource ds, Element el, String table) {
+
+        DAOUtil dao = new DAOUtil(ds);
+
         String sql = "";
         sql += "ALTER TABLE ";
         sql += table;
         sql += " DROP COLUMN ";
         sql += el.getAttributeValue("name") + ";";
 
-        return sql;
+        dao.executeSQLCommand(sql);
+
+        dao.releaseConnection();
     }
 
     @Override
-    public String addColumn(Element el, String table) {
+    public void addColumn(DataSource ds, Element el, String table) {
+
+        DAOUtil dao = new DAOUtil(ds);
+
         String sql = "";
         sql += "ALTER TABLE ";
         sql += table;
@@ -243,11 +316,16 @@ public class ParserMySQL implements Parser {
 
         sql = sql.substring(0, sql.length() - 2) + ";";
 
-        return sql;
+        dao.executeSQLCommand(sql);
+
+        dao.releaseConnection();
     }
 
     @Override
-    public String alterColumn(Element elFrom, Element elTo, String table) {
+    public void alterColumn(DataSource ds, Element elFrom, Element elTo, String table) {
+
+        DAOUtil dao = new DAOUtil(ds);
+
         String sql = "";
 
         sql += "ALTER TABLE ";
@@ -258,7 +336,9 @@ public class ParserMySQL implements Parser {
 
         sql = sql.substring(0, sql.length() - 2) + ";";
 
-        return sql;
+        dao.executeSQLCommand(sql);
+
+        dao.releaseConnection();
     }
 
 }
