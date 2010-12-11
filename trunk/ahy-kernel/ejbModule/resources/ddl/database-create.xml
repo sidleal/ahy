@@ -23,16 +23,70 @@
    	  <col name="user_id" type="java.lang.Long" required="true" foreignKey="User.id" />
    	  <col name="previousRevision_id" type="java.lang.Long" foreignKey="Content.id" />
    	  <col name="responseTo_id" type="java.lang.Long" foreignKey="Content.id" />
-   	  <insert><col key="id" value="1"/><col key="title" value="Welcome!"/><col key="teaser" value="Nice too see you."/><col key="text" value="This is your first content test. Everything is working good."/><col key="created" value="2010-02-24 11:12:00 -0300"/><col key="published" value="2010-02-24 11:12:00 -0300"/><col key="shortcut" value="welcome"/><col key="status" value="PUB"/><col key="revision" value="1"/><col key="user_id" value="1"/></insert>
+   	  
+   	  <insert><col key="id" value="1"/><col key="title" value="Default Theme"/><col key="teaser" value="This is a basic theme, you can do better."/>
+   	  <col key="text">
+   	  	<![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+			    "http://www.w3.org/TR/html4/strict.dtd">
+			<html>
+			  <head>
+			    <link href="#{res:template.css}" rel="stylesheet" type="text/css">
+				<title>#{windowTitle}</title>
+			  </head>
+			  <body>
+			  
+				  <div id="header">
+				  	<h1 class="title">Ahy-CMS</h1>
+				  </div>
+				  
+				  <div id="leftcol">
+				  	#{menu}
+				  </div>
+				  
+				  <div id="rightcol">
+				    #{adds}
+				  </div>
+				  
+				  <div id="content">
+				  	#{content}
+				  </div>
+				  
+				  <div id="footer">
+					<p>
+						Powered by <a target="_blank" href="http://code.google.com/p/ahy">Ahy - CMS</a> ( Version: #{version} ) 
+					</p>
+				  </div>
+			  
+			  </body>
+			</html>]]>
+   	  	</col>
+   	  	<col key="created" value="2010-02-24 11:12:00 -0300"/><col key="published" value="2010-02-24 11:12:00 -0300"/><col key="shortcut" value="themes/default"/><col key="status" value="PUB"/><col key="revision" value="1"/><col key="user_id" value="1"/></insert>
+   	  
+   	  <insert><col key="id" value="2"/><col key="title" value="Welcome!"/><col key="teaser" value="Nice too see you."/>
+   	  <col key="text">
+   	  	<![CDATA[
+   	  	<h3>Welcome to Ahy-CMS!</h3>
+   	  	<img src="#{res:pequi.jpg}" style="float:left; margin:0 15px 15px 0; width:250px"/>
+   	  	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam eleifend, nisl id tincidunt posuere, leo neque vestibulum diam, a bibendum lectus purus ut lacus. Integer posuere nunc at leo lacinia varius. Vivamus id dui et dolor consequat cursus sit amet sed ligula. Praesent quis leo arcu. Nullam vitae eros mi. Praesent interdum ornare sem at sollicitudin. Quisque metus ligula, volutpat in tincidunt sit amet, sollicitudin vitae nisi. Sed in nisi metus. Aenean pulvinar dui rhoncus sapien fermentum sagittis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin tristique condimentum risus, viverra commodo ante posuere sed. Donec varius, dui aliquam tempor rutrum, nisl justo dapibus metus, a laoreet lacus arcu quis neque. Nulla facilisi. Duis placerat imperdiet porttitor. Duis lacinia blandit consequat. Phasellus ultricies malesuada ullamcorper. Suspendisse pharetra mattis elit, vitae cursus orci pretium mattis. Vestibulum et elit ante. Nullam dapibus imperdiet mi, eget aliquet ipsum suscipit a.</p>
+        <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Aliquam sit amet risus urna, eget tempor lorem. Maecenas augue velit, congue vel porttitor a, gravida quis justo. Maecenas semper risus nulla, nec interdum sem. Mauris tincidunt rutrum ipsum, sed laoreet dui scelerisque vulputate. Mauris in mauris at elit elementum condimentum eget eget purus. Aliquam et nulla ut ipsum viverra mattis. Aliquam eget pretium enim. Sed rhoncus vehicula elit in euismod. Aenean sapien metus, consequat id feugiat ut, adipiscing vitae justo. Nulla ut augue et lacus consectetur sollicitudin nec at quam. Suspendisse nec tellus nulla, vitae laoreet est. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec eu tortor non sem posuere sagittis.</p>
+        <p>Nulla lacus nisi, malesuada nec tristique ac, ullamcorper blandit magna. Donec interdum velit commodo felis rutrum scelerisque. Praesent in ligula enim, eu tempus arcu. Cras a mattis tellus. Fusce luctus nisl vel massa suscipit a euismod magna ornare. Proin at dolor vehicula metus porttitor iaculis in a est. Vestibulum lacinia felis eget nunc placerat et placerat lacus dapibus. Quisque porttitor semper sapien quis imperdiet. Duis vitae elit augue, eget vehicula dui. Integer adipiscing adipiscing ornare. Vestibulum in vehicula odio. Fusce aliquet consequat nisl vel venenatis. Aenean rutrum nibh at dolor ultrices vel varius ligula pretium. Nunc dignissim eleifend sodales. Nulla non orci diam, non mollis lectus.</p>
+        <p>Morbi nisi diam, rhoncus eu posuere in, sollicitudin id nisl. Etiam commodo pellentesque nunc, a volutpat dolor dictum eu. Nullam imperdiet, urna dignissim volutpat iaculis, purus enim consequat arcu, id vehicula lacus sem vestibulum arcu. Duis ut felis ut felis aliquet euismod a id ipsum. Fusce ultrices orci quis tortor convallis id congue dolor dignissim. Aenean cursus neque sed nulla varius euismod. Cras eros diam, rhoncus eu vehicula vitae, varius a eros. Aliquam convallis mauris vel magna elementum a porta ante auctor. Praesent vitae diam ipsum. Cras a velit eu quam consequat eleifend non vitae nulla. In vel cursus purus. Nam eget leo ante, semper dapibus neque. Morbi et massa rutrum risus convallis sodales sit amet at nisl.</p>
+        <p>Quisque eu mi sit amet nisi varius vehicula vitae eu enim. In eu risus eros, sit amet blandit mauris. Duis semper fringilla magna nec aliquam. Sed interdum volutpat aliquet. In rhoncus sodales leo. Sed et egestas neque. Phasellus nec magna eget diam auctor iaculis nec id lorem. Maecenas consequat vestibulum felis tempus tincidunt. Mauris tellus ipsum, aliquam vel pulvinar sit amet, semper sed leo. Donec at mi sit amet felis dictum sollicitudin. Vivamus ac diam turpis. Cras in suscipit risus. Sed eget neque at neque egestas dapibus at ut nulla. Mauris interdum feugiat malesuada. Duis sit amet leo nisl, at tempor nibh. Phasellus porttitor est id eros malesuada ut pellentesque est commodo.</p>
+   	  	]]>
+		</col>
+   	  	<col key="created" value="2010-02-24 11:12:00 -0300"/><col key="published" value="2010-02-24 11:12:00 -0300"/><col key="shortcut" value="main"/><col key="status" value="PUB"/><col key="revision" value="1"/><col key="user_id" value="1"/></insert>
 	</table>
 	
-	<table name="ContentImage">
+	<table name="ContentResource">
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
    	  <col name="content_id" type="java.lang.Long" required="true" foreignKey="Content.id" />
 	  <col name="label" type="java.lang.String" maxLength="250" required="true"/>
-	  <col name="content" type="java.sql.Blob"/>
+	  <col name="data" type="java.sql.Blob"/>
 	  <col name="type" type="java.lang.String" maxLength="50" required="true"/>
 	  <col name="shortcut" type="java.lang.String" maxLength="100" required="true"/>
+	  <insert><col key="id" value="1"/><col key="content_id" value="1"/><col key="label" value="Default theme css."/><col key="data" value="/resources/ddl/file/template.css"/><col key="type" value="text/css"/><col key="shortcut" value="template.css"/></insert>
+	  <insert><col key="id" value="2"/><col key="content_id" value="1"/><col key="label" value="Default theme header."/><col key="data" value="/resources/ddl/file/header.jpg"/><col key="type" value="image/jpeg"/><col key="shortcut" value="header.jpg"/></insert>
+	  <insert><col key="id" value="3"/><col key="content_id" value="2"/><col key="label" value="Pequi Flower."/><col key="data" value="/resources/ddl/file/pequi.jpg"/><col key="type" value="image/jpeg"/><col key="shortcut" value="pequi.jpg"/></insert>
 	</table>
 	
 	<table name="Role">

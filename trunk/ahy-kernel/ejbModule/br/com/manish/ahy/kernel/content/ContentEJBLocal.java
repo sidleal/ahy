@@ -13,33 +13,15 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    	
-package br.com.manish.ahy.kernel.ddl;
+package br.com.manish.ahy.kernel.content;
 
-import javax.sql.DataSource;
+import javax.ejb.Local;
 
-import org.jdom.Element;
+import br.com.manish.ahy.kernel.BaseEJBLocal;
 
-public interface Parser {
-
-	Boolean verifyTableExistence(DataSource ds, String table);
-
-	void createTable(DataSource ds, Element el);
-	
-	void createTables(DataSource ds, Element el);
-
-	void dropTable(DataSource ds, Element el);
-
-	void dropColumn(DataSource ds, Element el, String table);
-
-	void addColumn(DataSource ds, Element el, String table);
-
-	void alterColumn(DataSource ds, Element elFrom, Element elTo, String table);
-
-	void insertRow(DataSource ds, Element el, String table);
-
-	void deleteRow(DataSource ds, Element elFilter, String table);
-
-	void updateRow(DataSource ds, Element elFilter, Element elDump, String table);
-
+@Local
+public interface ContentEJBLocal extends BaseEJBLocal {
+    ContentResource getResource(ContentResource filter);
+    Content getContent(Content filter);
+    String getParsedContent(Content filter);    
 }

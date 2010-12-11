@@ -25,7 +25,7 @@
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="col" minOccurs="1" maxOccurs="unbounded">
-											<xs:complexType>
+											<xs:complexType mixed="true">
 												<xs:attribute name="key" type="xs:string" />
 												<xs:attribute name="value" type="xs:string" />
 											</xs:complexType>

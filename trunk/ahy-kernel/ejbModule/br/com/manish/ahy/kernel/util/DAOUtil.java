@@ -16,14 +16,17 @@
 
 package br.com.manish.ahy.kernel.util;
 
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,29 +41,49 @@ import br.com.manish.ahy.kernel.exception.OopsException;
 public final class DAOUtil {
     private static Log log = LogFactory.getLog(DAOUtil.class);
 
-    private DAOUtil() {
+    private Connection con = null;
+    private Statement stmt = null;
+    private PreparedStatement pstmt = null;
+    private ResultSet rs = null;
+    private Integer pstmtCount = 1;
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss Z");
+    
+    public DAOUtil(DataSource ds) {
+        try {
+            log.debug("Connecting to database.");
+            con = ds.getConnection();
+            stmt = con.createStatement();
+            log.debug("Connection suceeded.");
+        } catch (Exception e) {
+        	throw new OopsException(e, "Problem when acessing database.");
+        }
     }
 
-    public static List<Map<String, Object>> executeSQLQuery(DataSource ds, String sql) {
+    public void releaseConnection() {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (pstmt != null) {
+                pstmt.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+            log.debug("Connection closed.");
+        } catch (Exception rse) {
+            log.error(rse);
+        }
+    }
 
+    public List<Map<String, Object>> executeSQLQuery(String sql) {
         List<Map<String, Object>> ret = new ArrayList<Map<String, Object>>();
 
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-
         try {
-
-            try {
-                log.debug("Connecting with database.");
-                con = ds.getConnection();
-                stmt = con.createStatement();
-                log.debug("Connection ok.");
-            } catch (Exception e) {
-                throw new OopsException(e, "Problem when acessing database.");
-            }
-
-            log.info("executing: " + sql);
+            log.info("executeSQLQuery: " + sql);
 
             rs = stmt.executeQuery(sql);
 
@@ -74,130 +97,16 @@ public final class DAOUtil {
             }
 
         } catch (Exception e) {
-            throw new OopsException(e, "Problem when executing sql command.");
-
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception rse) {
-                log.error(rse);
-            }
-            log.debug("Connection closed.");
+        	throw new OopsException(e, "Problem when executing sql command.");
         }
 
         return ret;
     }
 
-    public static void executeSQLCommand(DataSource ds, String sql) {
-        Connection con = null;
-        Statement stmt = null;
-
-        try {
-
-            try {
-                log.debug("Connecting with database.");
-                con = ds.getConnection();
-                stmt = con.createStatement();
-                log.debug("Connection ok.");
-            } catch (Exception e) {
-                throw new OopsException(e, "Problem when acessing database.");
-            }
-
-            log.info("executing: " + sql);
-
-            if (checkForBlob(sql, con)) {
-                log.debug("Blob field, using prepared statement.");
-            } else {
-                stmt.execute(sql);
-            }
-
-        } catch (Exception e) {
-        	throw new OopsException(e, "Problem when executing sql command.");
-
-        } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception rse) {
-                log.error(rse);
-            }
-            log.debug("Connection closed.");
-        }
-    }
-
-    private static Boolean checkForBlob(String sql, Connection con) throws SQLException, IOException {
-
-        int blob = sql.indexOf(JPAUtil.BLOB_BATCH_PREFIX);
-
-        Boolean blobPresent = blob > 0;
-
-        if (sql.trim().startsWith("INSERT") && blobPresent) {
-            String sqlA = sql.substring(0, sql.indexOf("VALUES (") + 8);
-            String sqlB = sql.substring(sql.indexOf("VALUES (") + 8, sql.length());
-            sqlB = sqlB.replaceAll(" ", "");
-            sqlB = sqlB.substring(0, sqlB.indexOf(")"));
-            String[] tokens = sqlB.split(",");
-
-            for (int i = 0; i < tokens.length; i++) {
-                sqlA += "?,";
-            }
-            sqlA = sqlA.substring(0, sqlA.length() - 1) + ")";
-
-            log.info("Prepared: " + sqlA);
-
-            PreparedStatement pstmt = con.prepareStatement(sqlA);
-
-            for (int i = 0; i < tokens.length; i++) {
-                String str = tokens[i];
-                if (str.startsWith(JPAUtil.BLOB_BATCH_PREFIX)) {
-                    String path = "";
-                    path = str.substring(JPAUtil.BLOB_BATCH_PREFIX.length(), str.length());
-                    byte[] fileArray = FileUtil.readResourceAsBytes(path);
-                    pstmt.setBytes(i + 1, fileArray);
-
-                } else {
-                    pstmt.setString(i + 1, str.replaceAll("'", ""));
-                }
-            }
-
-            pstmt.executeUpdate();
-        }
-
-        return blobPresent;
-    }
-
-    public static String executeSingleResultSQLQuery(DataSource ds, String sql) {
-
+    public String executeSQLQuerySingleResult(String sql) {
         String ret = null;
-
-        Connection con = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-
         try {
-
-            try {
-                log.debug("Connecting with database.");
-                con = ds.getConnection();
-                stmt = con.createStatement();
-                log.debug("Connection ok.");
-            } catch (Exception e) {
-                throw new OopsException(e, "Problem when acessing database.");
-            }
-
-            log.info("executing: " + sql);
+            log.info("executeSQLQuerySingleResult: " + sql);
 
             rs = stmt.executeQuery(sql);
 
@@ -206,25 +115,63 @@ public final class DAOUtil {
             }
 
         } catch (Exception e) {
-        	throw new OopsException(e, "Problem when executing sql query.");
-
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (con != null) {
-                    con.close();
-                }
-            } catch (Exception rse) {
-                log.error(rse);
-            }
-            log.debug("Connection closed.");
+        	throw new OopsException(e, "Problem when executing sql command.");
         }
+
         return ret;
     }
 
+    public void executeSQLCommand(String sql) {
+
+        try {
+            log.info("executeSQLCommand: " + sql);
+
+            stmt.execute(sql);
+
+        } catch (Exception e) {
+        	throw new OopsException(e, "Problem when executing sql command.");
+        }
+    }
+
+    public void prepareStatement(String sql) {
+        try {
+        	log.info("preparedStatement: " + sql);
+            pstmt = con.prepareStatement(sql);
+            pstmtCount = 1;
+        } catch (SQLException e) {
+        	throw new OopsException(e, "Problem when preparing sql command.");
+        }
+    }
+
+    public void addPreparedValue(String value, String type) {
+        try {
+            if (type.equals("java.lang.Boolean")) {
+                pstmt.setBoolean(pstmtCount, Boolean.valueOf(value));
+            } else if (type.equals("java.lang.Long")) {
+                pstmt.setLong(pstmtCount, Long.valueOf(value));
+            } else if (type.equals("java.lang.Integer")) {
+                pstmt.setLong(pstmtCount, Integer.valueOf(value));
+            } else if (type.equals("java.math.BigDecimal")) {
+                pstmt.setBigDecimal(pstmtCount, new BigDecimal(value));
+            } else if (type.equals("java.util.Date")) {
+                pstmt.setDate(pstmtCount, new java.sql.Date(DATE_FORMAT.parse(value).getTime()));
+            } else if (type.equals("java.sql.Blob")) {
+                pstmt.setBytes(pstmtCount, FileUtil.readResourceAsBytes(value));
+            } else {
+                pstmt.setString(pstmtCount, value);                
+            }
+            pstmtCount++;
+        } catch (Exception e) {
+        	throw new OopsException(e, "Problem when setting item value on prepared statement.");
+        }
+    }
+
+    public void executePreparedStatement() {
+        try {
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+        	throw new OopsException(e, "Problem when executing sql command.");
+    	}
+    }
+    
 }

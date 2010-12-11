@@ -16,6 +16,7 @@
 
 package br.com.manish.ahy.kernel.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -24,9 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.rowset.serial.SerialBlob;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -50,31 +52,44 @@ public final class JPAUtil {
 		parserMap.put("org.hibernate.dialect.MySQL5Dialect", ParserMySQL.class);
 	}
 
-	public static Blob streamToBlob(InputStream stream) throws IOException {
-		return Hibernate.createBlob(stream);
-	}
-
-	public static Blob bytesToBlob(byte[] stream) {
-		return Hibernate.createBlob(stream);
+	public static Blob bytesToBlob(byte[] bytes) {
+	    Blob ret = null;
+	    try {
+            ret = new SerialBlob(bytes);
+        } catch (Exception e) {
+            throw new OopsException(e, "Error reading file data.");
+        }
+	    return ret;
 	}
 
 	public static byte[] blobToBytes(Blob blob) {
-		byte[] anexoArquivo = null;
+		byte[] byteData = null;
 		try {
-			long tamanhoOriginal = blob.length();
-			if (tamanhoOriginal > Integer.MAX_VALUE) {
-				throw new OopsException("File too big.");
-			}
-			int tamanho = Long.valueOf(tamanhoOriginal).intValue();
-
-			anexoArquivo = new byte[tamanho];
-			blob.getBinaryStream().read(anexoArquivo);
+            InputStream is = blob.getBinaryStream();
+            ByteArrayOutputStream os = new ByteArrayOutputStream(1024);
+            byte[] bytes = new byte[512];
+         
+            int readBytes;
+            while ((readBytes = is.read(bytes)) > 0) {
+                os.write(bytes, 0, readBytes);
+            }
+         
+            byteData = os.toByteArray();
+         
+            is.close();
+            os.close();            
 		} catch (Exception e) {
 			throw new OopsException(e, "Error reading file data.");
 		}
-		return anexoArquivo;
+		return byteData;
 	}
 
+    public static Blob resourceToBlob(String path) throws IOException {
+        byte[] stream = FileUtil.readResourceAsBytes(path);
+        Blob ret = bytesToBlob(stream);
+        return ret;
+    }
+	
 	public static String getDatabaseTypeConfig() {
 
 		String ret = null;
