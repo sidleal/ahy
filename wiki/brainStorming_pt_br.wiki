@@ -1,0 +1,20 @@
+#Brainstorming em pt-BR: Rascunho de qualquer coisa que passar pela cabeça, pendências, idéias, módulos, tarefas, etc.
+
+= Regras =
+
+Um tópico por assunto, e coloque seu nome após cada comentário, comente como subitem.
+
+
+= Assuntos =
+
+  * Multi-site: Planejar e adaptar o kernel para atender diversos sites (domínios) em um mesmo servidor. (sidleal)
+
+  * Addons: Planejar e implementar a estrutura de addons. (sidleal)
+
+  * Addon de loja virtual, integração com pagseguro e paypal. (sidleal)
+
+  * Addons de álbuns de fotos (picasa e flickr). (sidleal)
+
+  * Addons de autenticação, google, facebook, ldap, sso. (sidleal)
+
+  * ...
