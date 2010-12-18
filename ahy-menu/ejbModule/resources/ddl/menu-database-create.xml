@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="database-create.xsd">
+	<table name="Menu">
+	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+	  <col name="name" type="java.lang.String" maxLength="100" required="true"/>
+	  <col name="path" type="java.lang.String" maxLength="250" required="true"/>
+	  <col name="status" type="java.lang.String" maxLength="3" required="true"/>
+	  <col name="position" type="java.lang.Integer" required="true" default="0"/>
+	  <col name="superMenu_id" type="java.lang.Long" foreignKey="Menu.id"/>
+   	  <insert><col key="id" value="1"/><col key="name" value="Menu"/><col key="path" value="/"/><col key="status" value="PUB"/><col key="position" value="0"/></insert>
+   	  <insert><col key="id" value="2"/><col key="name" value="Home"/><col key="path" value="/"/><col key="status" value="PUB"/><col key="position" value="0"/><col key="superMenu_id" value="1"/></insert>
+   	  <insert><col key="id" value="3"/><col key="name" value="About us"/><col key="path" value="/about.ahy"/><col key="status" value="PUB"/><col key="position" value="0"/><col key="superMenu_id" value="1"/></insert>
+   	  <insert><col key="id" value="4"/><col key="name" value="Contact"/><col key="path" value="/contact.ahy"/><col key="status" value="PUB"/><col key="position" value="0"/><col key="superMenu_id" value="1"/></insert>
+	</table>
+</dump>
