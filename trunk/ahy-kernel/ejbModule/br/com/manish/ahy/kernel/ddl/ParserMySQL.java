@@ -225,7 +225,7 @@ public class ParserMySQL implements Parser {
             sql += " AUTO_INCREMENT";
         }
         if (el.getAttributeValue("default") != null && !el.getAttributeValue("default").equals("")) {
-            sql += " DEFAULT " + el.getAttributeValue("default");
+            sql += " DEFAULT " + formatDefaultValue(el);
         }
         sql += ", ";
         if (Boolean.valueOf(el.getAttributeValue("primaryKey"))) {
@@ -250,10 +250,10 @@ public class ParserMySQL implements Parser {
 
     }
 
-    private String formatValueForInsert(Element el) {
+    private String formatDefaultValue(Element el) {
         String ret = "";
         String type = el.getAttributeValue("type");
-        String value = el.getAttributeValue("value");
+        String value = el.getAttributeValue("default");
         
         if (type.equals("java.lang.String")) {
             ret = "'" + value + "'";

@@ -31,6 +31,7 @@ public class Version extends BaseEntity {
     @GeneratedValue
     private Long id;
     
+    private String module;
     private Integer major;
     private Integer revision;
     private String note;
@@ -39,7 +40,8 @@ public class Version extends BaseEntity {
     	
     }
     
-    public Version(Integer major, Integer revision, String note) {
+    public Version(String module, Integer major, Integer revision, String note) {
+        this.module = module;
         this.major = major;
     	this.revision = revision;
     	this.note = note;
@@ -54,12 +56,12 @@ public class Version extends BaseEntity {
             return false;
         }
         Version castOther = (Version) other;
-        return new EqualsBuilder().append(revision, castOther.revision).isEquals();
+        return new EqualsBuilder().append(module, castOther.module).append(revision, castOther.revision).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(revision).toHashCode();
+        return new HashCodeBuilder().append(module).append(revision).toHashCode();
     }
     
     
@@ -69,7 +71,16 @@ public class Version extends BaseEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public Integer getRevision() {
+	
+	public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
+    }
+
+    public Integer getRevision() {
 		return revision;
 	}
 	public void setRevision(Integer revision) {
