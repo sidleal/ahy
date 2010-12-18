@@ -5,6 +5,7 @@
 	<projects>
 		<project>ahy-kernel</project>
 		<project>ahy-web</project>
+		<project>ahy-menu</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
