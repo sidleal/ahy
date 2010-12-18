@@ -42,6 +42,10 @@
 		<drop-table name="Test"/>
 	</update>
 
-
+	<update revision="30">
+		<alter-table name="Version">
+			<create-col name="module" type="java.lang.String" maxLength="100" required="true" default="kernel"/>
+		</alter-table>
+	</update>
 
 </update-log>

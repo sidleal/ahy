@@ -15,16 +15,21 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.kernel.content;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import br.com.manish.ahy.kernel.BaseEJB;
 import br.com.manish.ahy.kernel.UpdateManagerEJB;
+import br.com.manish.ahy.kernel.addon.AddonManagerEJBLocal;
 
 @Stateless
 public class ContentEJB extends BaseEJB implements ContentEJBLocal {
-
+    
+    @EJB
+    private AddonManagerEJBLocal addonManagerEJB;
+    
     @Override
     public ContentResource getResource(ContentResource filter) {
         ContentResource ret = new ContentResource();
@@ -69,7 +74,10 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
 
         } catch (NoResultException nre) {
             getLog().warn("Content not found: [" + filter.getShortcut() + "]");
-            ret = null; // TODO: return a default error page.
+            ret = new Content();
+            ret.setShortcut("/error");
+            ret.setTitle("Error");
+            ret.setText("Oops. I couldn't find this content. Sorry, I did my best to find, but there is nothing like this over here.");
 
         } catch (Exception e) {
             throw fireOopsException(e, "Error when retrieving content.");
@@ -103,7 +111,7 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             ret = ret.replaceAll("#\\{version\\}", UpdateManagerEJB.VERSION + "." + UpdateManagerEJB.REVISION);
             ret = ret.replaceAll("#\\{windowTitle\\}", content.getTitle());
             
-            
+            ret = addonManagerEJB.afterHtmlParser(ret);
         }
         
         return ret;

@@ -14,12 +14,19 @@
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package br.com.manish.ahy.kernel;
+package br.com.manish.ahy.kernel.addon;
 
 import javax.ejb.Local;
 
+import org.jdom.Element;
+
+import br.com.manish.ahy.kernel.BaseEJBLocal;
+import br.com.manish.ahy.kernel.Version;
+
 @Local
-public interface UpdateManagerEJBLocal extends BaseEJBLocal {
-    String getVersion();
-    void verifyDatabase(Version version);
+public interface BaseAddonEJBLocal extends BaseEJBLocal {
+    Version getVersion();
+    String afterHtmlParser(String html);
+    Element getDatabaseCreateXML();
+    Element getUpdateLogXML();
 }

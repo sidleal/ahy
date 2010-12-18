@@ -20,7 +20,7 @@
 												<xs:attribute name="primaryKey" type="xs:boolean" />
 												<xs:attribute name="foreignKey" type="xs:string" />
 												<xs:attribute name="maxLength" type="xs:string" />
-												<xs:attribute name="default" type="xs:boolean" />
+												<xs:attribute name="default" type="xs:string" />
 												<xs:attribute name="unique" type="xs:boolean" />
 											</xs:complexType>
 										</xs:element>
@@ -58,7 +58,7 @@
 												<xs:attribute name="primaryKey" type="xs:boolean" />
 												<xs:attribute name="foreignKey" type="xs:string" />
 												<xs:attribute name="maxLength" type="xs:string" />
-												<xs:attribute name="default" type="xs:boolean" />
+												<xs:attribute name="default" type="xs:string" />
 												<xs:attribute name="unique" type="xs:boolean" />
 											</xs:complexType>
 										</xs:element>
@@ -74,7 +74,7 @@
 															<xs:attribute name="primaryKey" type="xs:boolean" />
 															<xs:attribute name="foreignKey" type="xs:string" />
 															<xs:attribute name="maxLength" type="xs:string" />
-															<xs:attribute name="default" type="xs:boolean" />
+															<xs:attribute name="default" type="xs:string" />
 															<xs:attribute name="unique" type="xs:boolean" />
 														</xs:complexType>
 													</xs:element>
@@ -87,7 +87,7 @@
 															<xs:attribute name="primaryKey" type="xs:boolean" />
 															<xs:attribute name="foreignKey" type="xs:string" />
 															<xs:attribute name="maxLength" type="xs:string" />
-															<xs:attribute name="default" type="xs:boolean" />
+															<xs:attribute name="default" type="xs:string" />
 															<xs:attribute name="unique" type="xs:boolean" />
 														</xs:complexType>
 													</xs:element>
