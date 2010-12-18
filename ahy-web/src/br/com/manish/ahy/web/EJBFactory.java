@@ -58,8 +58,15 @@ public class EJBFactory {
 
     private InitialContext setupContext() {
     	
-    	String server = "localhost"; //TODO: server and port will need user configuration
-        String jnpPort = "1099";
+        String server = System.getProperty("ahycms.jnpServer");
+        if (server == null || server.equals("")) {
+            server = "localhost";//default
+        }
+
+        String jnpPort = System.getProperty("ahycms.jnpPort");
+        if (jnpPort == null || jnpPort.equals("")) {
+            jnpPort = "1099";//default
+        }
         
         Properties env = new Properties();
         env.setProperty(InitialContext.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");

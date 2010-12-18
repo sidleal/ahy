@@ -1,0 +1,24 @@
+<?xml version="1.0"?>  
+<jboss-web>
+     <!-- 
+     <security-domain>java:/jaas/ahyRealm</security-domain>
+     <context-root>/ahy</context-root>
+      -->
+     <context-root>/ahy</context-root>
+	<!-- 
+     <context-root>/</context-root>
+	 <virtual-host>ahycms.org</virtual-host>
+    -->
+    
+	 <!-- 
+	   change server.xml of jboss, like:
+	   (...)
+	     <Host name="ahycms.org" autoDeploy="true"
+              deployOnStartup="true"
+              deployXML="false">
+              <Alias>www.ahycms.org</Alias>
+         </Host>
+      </Engine>
+	  -->
+	  
+</jboss-web>
