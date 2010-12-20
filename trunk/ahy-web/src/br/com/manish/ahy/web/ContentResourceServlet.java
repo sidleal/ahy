@@ -16,6 +16,7 @@
 package br.com.manish.ahy.web;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -55,6 +56,8 @@ public class ContentResourceServlet extends HttpServlet {
         
         if (ret != null) {
             resp.setHeader("Content-disposition", "inline; filename=" + ret.getShortcut());
+            long expires = new Date().getTime() + 1000*60;
+            resp.setDateHeader("Expires", expires);
             resp.setContentType(ret.getType());
     
             byte[] file = JPAUtil.blobToBytes(ret.getData());
