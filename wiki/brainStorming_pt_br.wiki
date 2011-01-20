@@ -2,9 +2,6 @@
 
 = Pendências =
 
-==Multiplos sites em uma mesmo jboss app server==
- * Assim como os melhores CMS do mercado, precisamos permitir que em um mesmo servidor sejam hospedados diversos sites, isso de forma simples e fácil de manter e atualizar. O JBoss permite configurar virtual hosts independentes, a dificuldade aqui é decidir como tratar o acesso à base de dados e EJB's de cada site, sem conflitos.
-
 ==Suporte a demais bancos: Postgres, SQLServer, HSQLDB, Oracle.==
  * Criar a classe parser para cada um desses bancos. Baseando-se na atual para MySQL. Essa classe é responsável pela criação e atualização da base, o acesso normal já é feito com JPA/hibernate que é independente de banco.
 
@@ -64,3 +61,11 @@
 
 ==Addon GoogleMaps==
  * Integração com googlemaps.
+
+----
+
+=Concluídas=
+
+==Multiplos sites em uma mesmo jboss app server==
+ * Assim como os melhores CMS do mercado, precisamos permitir que em um mesmo servidor sejam hospedados diversos sites, isso de forma simples e fácil de manter e atualizar. O JBoss permite configurar virtual hosts independentes, a dificuldade aqui é decidir como tratar o acesso à base de dados e EJB's de cada site, sem conflitos.
+OK - http://code.google.com/p/ahy/issues/detail?id=2&can=1
