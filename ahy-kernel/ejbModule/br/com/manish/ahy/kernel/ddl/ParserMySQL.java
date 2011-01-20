@@ -228,8 +228,9 @@ public class ParserMySQL implements Parser {
             sql += " DEFAULT " + formatDefaultValue(el);
         }
         sql += ", ";
+        
         if (Boolean.valueOf(el.getAttributeValue("primaryKey"))) {
-            sql += "PRIMARY KEY pk_" + TextUtil.tinyFirstLetter(table) + " (" + el.getAttributeValue("name") + "), ";
+            sql += "CONSTRAINT pk_" + TextUtil.tinyFirstLetter(table) + " PRIMARY KEY (" + el.getAttributeValue("name") + "), ";
         }
         String fk = el.getAttributeValue("foreignKey");
         if (fk != null && !fk.equals("")) {
@@ -238,12 +239,11 @@ public class ParserMySQL implements Parser {
                 throw new OopsException("Wrong foreign key instruction, need [Table.field] : [" + fk + "]");
             }
             String nomeFK = "fk_" + TextUtil.tinyFirstLetter(table) + "_" + el.getAttributeValue("name");
-            sql += "FOREIGN KEY " + nomeFK + " (" + el.getAttributeValue("name") + ") REFERENCES " + tokenFK[0] + "("
+            sql += "CONSTRAINT " + nomeFK + " FOREIGN KEY (" + el.getAttributeValue("name") + ") REFERENCES " + tokenFK[0] + "("
                     + tokenFK[1] + "), ";
         }
         if (Boolean.valueOf(el.getAttributeValue("unique"))) {
-            sql += "UNIQUE uq_" + TextUtil.tinyFirstLetter(table) + el.getAttributeValue("name") + " ("
-                    + el.getAttributeValue("name") + "), ";
+            sql += "CONSTRAINT uq_" + TextUtil.tinyFirstLetter(table) + el.getAttributeValue("name") + " UNIQUE (" + el.getAttributeValue("name") + "), ";
         }
 
         return sql;
@@ -312,8 +312,13 @@ public class ParserMySQL implements Parser {
         sql += "ALTER TABLE ";
         sql += table;
         sql += " ADD COLUMN ";
-        sql += createColumn(el, table);
 
+        String column = createColumn(el, table);
+        if (column.indexOf(",") > 0) {
+            sql += column.split(",")[0];
+            dao.executeSQLCommand(sql);
+            sql = "ALTER TABLE " + table + " ADD " + column.split(",")[1] + "  ";
+        }
         sql = sql.substring(0, sql.length() - 2) + ";";
 
         dao.executeSQLCommand(sql);
@@ -323,7 +328,6 @@ public class ParserMySQL implements Parser {
 
     @Override
     public void alterColumn(DataSource ds, Element elFrom, Element elTo, String table) {
-
         DAOUtil dao = new DAOUtil(ds);
 
         String sql = "";
@@ -332,13 +336,19 @@ public class ParserMySQL implements Parser {
         sql += table;
         sql += " CHANGE COLUMN ";
         sql += elFrom.getAttributeValue("name") + " ";
-        sql += createColumn(elTo, table);
+        
+        String column = createColumn(elTo, table);
+        if (column.indexOf(",") > 0) {
+            column = column.split(",")[0] + "  ";
+        }
+        sql += column;
 
         sql = sql.substring(0, sql.length() - 2) + ";";
 
         dao.executeSQLCommand(sql);
 
         dao.releaseConnection();
+        
     }
 
 }

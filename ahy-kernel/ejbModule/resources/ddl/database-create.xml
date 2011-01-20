@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="database-create.xsd">
+
+	<table name="Site">
+	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+	  <col name="domain" type="java.lang.String" maxLength="250" required="true"/>
+	  <col name="status" type="java.lang.String" maxLength="3" required="true"/>
+	  <insert><col key="id" value="1"/><col key="domain" value="ahycms.local"/><col key="status" value="ACT" /></insert>
+	</table>
+	
 	<table name="User">
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+	  <col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" />
 	  <col name="email" type="java.lang.String" maxLength="250" required="true"/>
 	  <col name="password" type="java.lang.String" maxLength="100" required="true"/>
 	  <col name="name" type="java.lang.String" maxLength="250" required="true"/>
 	  <col name="language" type="java.lang.String" maxLength="10" />
 	  <col name="status" type="java.lang.String" maxLength="3" required="true"/>
-   	  <insert><col key="id" value="1"/><col key="email" value="adm@ahy"/><col key="password" value="E03D44D71A489A7C37F89E9A221A283456EE8DE7CCEE9F9D3E490DDC58B75E35"/><col key="name" value="Administrator"/><col key="language" value="en-US"/><col key="status" value="ACT"/></insert>
+   	  <insert><col key="id" value="1"/><col key="site_id" value="1"/><col key="email" value="adm@ahy"/><col key="password" value="E03D44D71A489A7C37F89E9A221A283456EE8DE7CCEE9F9D3E490DDC58B75E35"/><col key="name" value="Administrator"/><col key="language" value="en-US"/><col key="status" value="ACT"/></insert>
 	</table>
 
 	<table name="Content">
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+	  <col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" />
 	  <col name="title" type="java.lang.String" maxLength="250" required="true"/>
 	  <col name="teaser" type="java.lang.String" maxLength="1000"/>
 	  <col name="text" type="java.lang.String" maxLength="8000"/>
@@ -24,7 +34,7 @@
    	  <col name="previousRevision_id" type="java.lang.Long" foreignKey="Content.id" />
    	  <col name="responseTo_id" type="java.lang.Long" foreignKey="Content.id" />
    	  
-   	  <insert><col key="id" value="1"/><col key="title" value="Default Theme"/><col key="teaser" value="This is a basic theme, you can do better."/>
+   	  <insert><col key="id" value="1"/><col key="site_id" value="1"/><col key="title" value="Default Theme"/><col key="teaser" value="This is a basic theme, you can do better."/>
    	  <col key="text">
    	  	<![CDATA[<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 			    "http://www.w3.org/TR/html4/strict.dtd">
@@ -62,7 +72,7 @@
    	  	</col>
    	  	<col key="created" value="2010-02-24 11:12:00 -0300"/><col key="published" value="2010-02-24 11:12:00 -0300"/><col key="shortcut" value="themes/default"/><col key="status" value="PUB"/><col key="revision" value="1"/><col key="user_id" value="1"/></insert>
    	  
-   	  <insert><col key="id" value="2"/><col key="title" value="Welcome!"/><col key="teaser" value="Nice too see you."/>
+   	  <insert><col key="id" value="2"/><col key="site_id" value="1"/><col key="title" value="Welcome!"/><col key="teaser" value="Nice too see you."/>
    	  <col key="text">
    	  	<![CDATA[
    	  	<h3>Welcome to Ahy-CMS!</h3>
@@ -91,10 +101,11 @@
 	
 	<table name="Role">
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+	  <col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" />
 	  <col name="name" type="java.lang.String" maxLength="100" required="true"/>
 	  <col name="isDefault" type="java.lang.Boolean" required="true"/>
-   	  <insert><col key="id" value="1"/><col key="name" value="Administrators"/><col key="isDefault" value="false"/></insert>
-   	  <insert><col key="id" value="2"/><col key="name" value="Public"/><col key="isDefault" value="true"/></insert>
+   	  <insert><col key="id" value="1"/><col key="site_id" value="1"/><col key="name" value="Administrators"/><col key="isDefault" value="false"/></insert>
+   	  <insert><col key="id" value="2"/><col key="site_id" value="1"/><col key="name" value="Public"/><col key="isDefault" value="true"/></insert>
 	</table>
 
 	<table name="UserRole">
@@ -106,9 +117,10 @@
 
 	<table name="ContentTag">
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+	  <col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" />
 	  <col name="name" type="java.lang.String" maxLength="100" required="true"/>
 	  <col name="description" type="java.lang.String" maxLength="250"/>
-   	  <insert><col key="id" value="1"/><col key="name" value="news"/><col key="description" value="News with Public Access."/></insert>
+   	  <insert><col key="id" value="1"/><col key="site_id" value="1"/><col key="name" value="news"/><col key="description" value="News with Public Access."/></insert>
 	</table>
 
 	<table name="RoleContentAccess">

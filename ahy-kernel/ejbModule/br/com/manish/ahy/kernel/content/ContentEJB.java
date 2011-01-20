@@ -66,7 +66,8 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             getLog().debug("getContent: [" + filter.getShortcut() + "]");
 
             String sql = "select c from Content c";
-            sql += " where c.shortcut = '" + filter.getShortcut() + "'";
+            sql += " where c.site.domain = '" + filter.getSite().getDomain() + "'";
+            sql += " and c.shortcut = '" + filter.getShortcut() + "'";
 
             Query query = getEm().createQuery(sql);
 

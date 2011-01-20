@@ -29,6 +29,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import br.com.manish.ahy.kernel.BaseEntity;
+import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.security.User;
 
 @Entity
@@ -38,6 +39,9 @@ public class Content extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+    
+    @ManyToOne
+    private Site site;
     
     private String title;
     private String teaser;
@@ -66,12 +70,12 @@ public class Content extends BaseEntity {
             return false;
         }
         Content castOther = (Content) other;
-        return new EqualsBuilder().append(shortcut, castOther.shortcut).append(revision, castOther.revision).isEquals();
+        return new EqualsBuilder().append(site, castOther.site).append(shortcut, castOther.shortcut).append(revision, castOther.revision).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(shortcut).append(revision).toHashCode();
+        return new HashCodeBuilder().append(site).append(shortcut).append(revision).toHashCode();
     }
 
 	public Long getId() {
@@ -169,5 +173,13 @@ public class Content extends BaseEntity {
 	public void setResponseTo(Content responseTo) {
 		this.responseTo = responseTo;
 	}
+
+    public Site getSite() {
+        return site;
+    }
+
+    public void setSite(Site site) {
+        this.site = site;
+    }
     
 }

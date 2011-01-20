@@ -18,11 +18,13 @@ package br.com.manish.ahy.kernel.security;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 import br.com.manish.ahy.kernel.BaseEntity;
+import br.com.manish.ahy.kernel.Site;
 
 @Entity
 public class User extends BaseEntity {
@@ -32,6 +34,9 @@ public class User extends BaseEntity {
 	@GeneratedValue
 	private Long id;
 
+    @ManyToOne
+    private Site site;
+    
 	private String email;
 	private String password;
 	private String name;
@@ -47,12 +52,12 @@ public class User extends BaseEntity {
 			return false;
 		}
 		User castOther = (User) other;
-		return new EqualsBuilder().append(email, castOther.email).isEquals();
+		return new EqualsBuilder().append(site, castOther.site).append(email, castOther.email).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(email).toHashCode();
+		return new HashCodeBuilder().append(site).append(email).toHashCode();
 	}
 
 	public Long getId() {
@@ -62,8 +67,16 @@ public class User extends BaseEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
+	
+	public Site getSite() {
+        return site;
+    }
 
-	public String getEmail() {
+    public void setSite(Site site) {
+        this.site = site;
+    }
+
+    public String getEmail() {
 		return email;
 	}
 

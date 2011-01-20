@@ -37,7 +37,7 @@ import br.com.manish.ahy.kernel.util.JPAUtil;
 @Stateless
 public class UpdateManagerEJB extends BaseEJB implements UpdateManagerEJBLocal {
     public static final Integer VERSION = 1;
-    public static final Integer REVISION = 32;
+    public static final Integer REVISION = 34;
     private static final String KERNEL = "kernel";
 
     private Parser parser = JPAUtil.getParser();
