@@ -48,4 +48,25 @@
 		</alter-table>
 	</update>
 
+	<update revision="34">
+		<create-table name="Site">
+			<col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
+	  		<col name="domain" type="java.lang.String" maxLength="250" required="true"/>
+	  		<col name="status" type="java.lang.String" maxLength="3" required="true"/>
+	  		<insert><col key="id" value="1"/><col key="domain" value="ahycms.local"/><col key="status" value="ACT" /></insert>
+		</create-table>
+		<alter-table name="User">
+			<create-col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" default="1"/>
+		</alter-table>
+		<alter-table name="Content">
+			<create-col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" default="1"/>
+		</alter-table>
+		<alter-table name="Role">
+			<create-col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" default="1"/>
+		</alter-table>		
+		<alter-table name="ContentTag">
+			<create-col name="site_id" type="java.lang.Long" required="true" foreignKey="Site.id" default="1"/>
+		</alter-table>
+	</update>
+
 </update-log>
