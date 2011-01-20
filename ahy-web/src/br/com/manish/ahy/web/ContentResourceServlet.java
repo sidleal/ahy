@@ -56,7 +56,7 @@ public class ContentResourceServlet extends HttpServlet {
         
         if (ret != null) {
             resp.setHeader("Content-disposition", "inline; filename=" + ret.getShortcut());
-            long expires = new Date().getTime() + 1000*60;
+            long expires = new Date().getTime() + 1000*60*60*6; // six hours
             resp.setDateHeader("Expires", expires);
             resp.setContentType(ret.getType());
     

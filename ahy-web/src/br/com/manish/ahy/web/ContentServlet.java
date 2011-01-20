@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.UpdateManagerEJBLocal;
 import br.com.manish.ahy.kernel.content.Content;
 import br.com.manish.ahy.kernel.content.ContentEJBLocal;
@@ -36,10 +37,15 @@ public class ContentServlet extends HttpServlet {
 
         verifyVersionAndDatabase(req);
         
+        String domain = req.getServerName();
+        
         String path = req.getServletPath();
         path = path.substring(1, path.length() - 4);
 
         Content filter = new Content();
+        filter.setSite(new Site());
+        filter.getSite().setDomain(domain);
+        
         filter.setShortcut(path);
         
         ContentEJBLocal ejb = EJBFactory.getInstance().getEJB(ContentEJBLocal.class);
