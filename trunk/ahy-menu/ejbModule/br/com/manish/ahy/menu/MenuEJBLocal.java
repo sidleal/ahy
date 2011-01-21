@@ -15,10 +15,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.menu;
 
+import java.util.Map;
+
 import javax.ejb.Local;
 
 import br.com.manish.ahy.kernel.addon.BaseAddonEJBLocal;
 
 @Local
 public interface MenuEJBLocal extends BaseAddonEJBLocal {
+    Map<String, String> pesquisar(Map<String, String> parameters);
 }
