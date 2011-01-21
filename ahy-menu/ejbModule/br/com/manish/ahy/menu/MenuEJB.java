@@ -16,7 +16,9 @@
 package br.com.manish.ahy.menu;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.Query;
@@ -104,6 +106,20 @@ public class MenuEJB extends BaseAddonEJB implements MenuEJBLocal {
     @Override
     public Version getVersion() {
         return new Version(MENU, VERSION, REVISION, "");
+    }
+
+
+    @Override
+    public Map<String, String> pesquisar(Map<String, String> parameters) {
+        Map<String, String> ret = new HashMap<String, String>();
+
+        System.out.println("---" + parameters.get("domain"));
+        System.out.println("---" + parameters.get("nome"));
+
+        
+        ret.put("nome", "Jabuticaba com caroço");
+        
+        return ret;
     }
 
     
