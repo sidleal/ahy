@@ -42,12 +42,18 @@ public class EJBFactory {
     }
 
     public <T extends BaseEJBLocal> T getEJB(Class<? extends BaseEJBLocal> localInterface) {
+        
+        String ejbName = localInterface.getSimpleName();
+        ejbName = ejbName.substring(0, ejbName.length() - 5);
+            
+        return getEJB(ejbName);
+    }
+
+    public <T extends BaseEJBLocal> T getEJB(String ejbName) {
         String jndiName = "";
 
         try {
-            jndiName = localInterface.getSimpleName();
-            jndiName = jndiName.substring(0, jndiName.length() - 5);
-            jndiName = "ahy/" + jndiName + "/local";
+            jndiName = "ahy/" + ejbName + "/local";
             T instancia = (T) ic.lookup(jndiName);
             return instancia;
 
@@ -55,7 +61,7 @@ public class EJBFactory {
             throw new OopsException(e, "Wrong ejb name: {0}", jndiName);
         }
     }
-
+    
     private InitialContext setupContext() {
     	
         String server = System.getProperty("ahycms.jnpServer");
