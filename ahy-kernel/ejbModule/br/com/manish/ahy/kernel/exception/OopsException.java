@@ -15,8 +15,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.kernel.exception;
 
-import java.io.Serializable;
-
 public class OopsException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
