@@ -23,19 +23,21 @@ import java.util.Map;
 
 public class WSUtil {
 
-    public static String callStringWS(String domain, String wsName, Map<String, String> parameters) {
+    public static String callStringWS(String wsName, String action, Map<String, String> parameters) {
         String ret = "";
         try {
             String post = "";
+            post += "sessionid=" + SessionInfo.getInstance().getSessionId() + "&";
             for (String key: parameters.keySet()) {
-                post = key + "=" + URLEncoder.encode(parameters.get(key),"UTF-8") + "&";
+                post += key + "=" + URLEncoder.encode(parameters.get(key),"UTF-8") + "&";
             }
-            
+
             if (post.length() > 1) {
                 post = post.substring(0, post.length()-1);
             }
 
-            HTTPContent content = HTTPUtil.getHTTPContent("http://" + domain + "/ws/" + wsName, post);
+            HTTPContent content = HTTPUtil.getHTTPContent("http://" 
+                    + SessionInfo.getInstance().getDomain() + "/ws/" + wsName + "/" + action, post);
             if (content.getSucess()) {
                 ret = content.getContentAsString();
             }
@@ -47,20 +49,26 @@ public class WSUtil {
         return ret;
     }
 
-    public static Map<String, String> callMapWS(String domain, String wsName, Map<String, String> parameters) {
+    public static Map<String, String> callMapWS(String wsName, String action, Map<String, String> parameters) {
         Map<String, String> ret = new HashMap<String, String>();
         try {
-            String content = callStringWS(domain, wsName, parameters);
+            String content = callStringWS(wsName, action, parameters);
+
             String[] retTokens = content.split("&");
             for (String item: retTokens) {
                 String[] itemToken = item.split("=");
-                ret.put(itemToken[0], URLDecoder.decode(itemToken[1], "UTF-8"));
+                if (item.indexOf("=") > 0) {
+                    ret.put(itemToken[0], URLDecoder.decode(itemToken[1].trim(), "UTF-8"));
+                } else {
+                    ret.put("error", "Blank response from httpcontent.");
+                }
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new OopsException(e, "Error when calling Map WS: {0}", wsName);
         }
-
+        
         return ret;
     }
 
