@@ -16,6 +16,8 @@
 
 package br.com.manish.ahy.kernel.security;
 
+import java.util.Map;
+
 import javax.ejb.Local;
 
 import br.com.manish.ahy.kernel.BaseEJBLocal;
@@ -23,4 +25,5 @@ import br.com.manish.ahy.kernel.BaseEJBLocal;
 @Local
 public interface AuthenticatorEJBLocal extends BaseEJBLocal {
     User authenticate(User filter);
+    Map<String, String> authenticate(Map<String, String> parameters);
 }

@@ -16,11 +16,15 @@
 
 package br.com.manish.ahy.kernel.security;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import br.com.manish.ahy.kernel.BaseEJB;
+import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.exception.OopsException;
 import br.com.manish.ahy.kernel.util.HashUtil;
 
@@ -34,7 +38,11 @@ public class AuthenticatorEJB extends BaseEJB implements AuthenticatorEJBLocal {
 
             getLog().debug("User: [" + filter.getEmail() + "]");
 
-            Query query = getEm().createQuery("from User where email = '" + filter.getEmail() + "'");
+            String sql = "from User u";
+            sql += " where u.site.domain = '" + filter.getSite().getDomain() + "'";
+            sql += " and email = '" + filter.getEmail() + "'";
+            
+            Query query = getEm().createQuery(sql);
             User user = (User) query.getSingleResult();
             
             String hashTeste = HashUtil.getHash(filter.getEmail() + filter.getPassword());
@@ -52,6 +60,26 @@ public class AuthenticatorEJB extends BaseEJB implements AuthenticatorEJBLocal {
             fireOopsException(e, "Error when authenticating the user.");
         }
 
+        return ret;
+    }
+
+    @Override
+    public Map<String, String> authenticate(Map<String, String> parameters) {
+        User filter = new User();
+
+        filter.setEmail(parameters.get("login"));
+        filter.setPassword(parameters.get("password"));
+        
+        filter.setSite(new Site());
+        filter.getSite().setDomain(parameters.get("domain"));
+        
+        User authUser = authenticate(filter);
+        
+        Map<String, String> ret = new HashMap<String, String>();
+        
+        ret.put("login", authUser.getEmail());
+        ret.put("name", authUser.getName());
+        
         return ret;
     }
 
