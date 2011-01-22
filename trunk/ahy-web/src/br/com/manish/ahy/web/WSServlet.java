@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.manish.ahy.kernel.BaseEJBLocal;
-import br.com.manish.ahy.kernel.content.ContentEJBLocal;
+import br.com.manish.ahy.kernel.exception.OopsException;
 import br.com.manish.ahy.kernel.util.TextUtil;
 
 public class WSServlet extends HttpServlet {
@@ -49,7 +49,7 @@ public class WSServlet extends HttpServlet {
         for (String par : req.getParameterMap().keySet()) {
             parameters.put(par, req.getParameter(par));
         }
-
+        
         String[] ejbTokens = path.split("/");
         String ejbName = TextUtil.capFirstLetter(ejbTokens[1]) + "EJB";
         String action = ejbTokens[2];
@@ -62,7 +62,12 @@ public class WSServlet extends HttpServlet {
             retMap = (Map<String, String>) m.invoke(ejb, parameters);
             
         } catch (Exception e) {
-            ret = "Error: " + e.getMessage();
+            if (e.getCause().getCause() instanceof OopsException) { //TODO: refactoring
+                ret = e.getCause().getCause().getMessage();
+            } else {
+                ret = e.getMessage();
+            }
+            ret = "error=" + "Error: " + ret + "&";
             e.printStackTrace();
         }
 
