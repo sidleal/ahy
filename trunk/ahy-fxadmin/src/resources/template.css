@@ -1,0 +1,47 @@
+.menu-rect-normal {
+    -fx-fill: #333457;
+    -fx-stroke: transparent;
+}
+.menu-label-normal {
+    -fx-fill: #898988;
+    -fx-font: bold 12pt sans-serif;
+    -fx-text-origin: top
+}
+
+.menu-rect-hover {
+    -fx-fill: #FF740A;
+    -fx-stroke: transparent;
+}
+.menu-label-hover {
+    -fx-fill: #333457;
+    -fx-font: bold 12pt sans-serif;
+    -fx-text-origin: top
+}
+
+.menu-rect-selected {
+    -fx-fill: #898988;
+    -fx-stroke: transparent;
+}
+.menu-label-selected {
+    -fx-fill: #898988;
+    -fx-font: bold 12pt sans-serif;
+    -fx-text-origin: top
+}
+
+.text-admin-title {
+    -fx-fill: #333457;
+    -fx-font: bold 24pt sans-serif;
+    -fx-text-origin: top
+}
+
+.text-logged-user {
+    -fx-fill: #898988;
+    -fx-font: 16pt sans-serif;
+    -fx-text-origin: top
+}
+
+.text-alert {
+    -fx-fill: #FF740A;
+    -fx-font: 16pt sans-serif;
+    -fx-text-origin: top
+}
