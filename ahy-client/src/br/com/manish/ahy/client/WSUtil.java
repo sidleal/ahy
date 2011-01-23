@@ -31,10 +31,10 @@ public class WSUtil {
             for (String key: parameters.keySet()) {
                 post += key + "=" + URLEncoder.encode(parameters.get(key),"UTF-8") + "&";
             }
-
             if (post.length() > 1) {
                 post = post.substring(0, post.length()-1);
             }
+            //System.out.println("-----------" + post);
 
             HTTPContent content = HTTPUtil.getHTTPContent("http://" 
                     + SessionInfo.getInstance().getDomain() + "/ws/" + wsName + "/" + action, post);
@@ -63,8 +63,6 @@ public class WSUtil {
                     ret.put("error", "Blank response from httpcontent.");
                 }
             }
-
-            SessionInfo.getInstance().setSessionId(ret.get("sessionid"));
 
         } catch (Exception e) {
             e.printStackTrace();
