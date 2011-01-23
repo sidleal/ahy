@@ -16,6 +16,7 @@
 
 package br.com.manish.ahy.fxadmin;
 
+import br.com.manish.ahy.client.SessionInfo;
 import br.com.manish.ahy.client.WSUtil;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,8 @@ public class LoginModel {
             parameters.put("password", passwd);
 
             ret = WSUtil.callMapWS("authenticator", "authenticate", parameters);
+
+            SessionInfo.getInstance().setSessionId(ret.get("sessionid"));
 
         } catch(Exception e) {
             ret.put("error", e.getMessage());
