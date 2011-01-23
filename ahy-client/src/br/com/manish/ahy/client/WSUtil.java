@@ -64,6 +64,8 @@ public class WSUtil {
                 }
             }
 
+            SessionInfo.getInstance().setSessionId(ret.get("sessionid"));
+
         } catch (Exception e) {
             e.printStackTrace();
             throw new OopsException(e, "Error when calling Map WS: {0}", wsName);
