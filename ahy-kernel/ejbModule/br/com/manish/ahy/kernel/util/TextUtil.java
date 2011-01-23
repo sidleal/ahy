@@ -40,6 +40,21 @@ public final class TextUtil {
         return text;
     }
 
+    public static String formatDOSLike(String text) {
+        
+        String ret = "";
+        String preProcessedText = removeAccentuation(text);
+        preProcessedText = preProcessedText.replaceAll(" ", "-");
+        
+        for (byte b : preProcessedText.getBytes()) {
+            if ((b == 95) || (b == 46) || (b > 47 && b < 58) || (b > 64 && b < 91) 
+                    || (b > 64 && b < 91) || (b > 96 && b < 123)) {
+                ret += (char) b;
+            }
+        }
+        return ret;
+    }
+    
     public static String tinyFirstLetter(String str) {
         String firstLetter = str.substring(0, 1);
         String ret = str.substring(1, str.length());

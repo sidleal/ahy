@@ -23,6 +23,8 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.apache.ws.scout.model.uddi.v2.GetServiceDetail;
+
 import br.com.manish.ahy.kernel.BaseEJB;
 import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.exception.OopsException;
@@ -49,6 +51,7 @@ public class AuthenticatorEJB extends BaseEJB implements AuthenticatorEJBLocal {
 
             if (hashTeste.equals(user.getPassword())) {
                 ret = user;
+                startSession(user);
             } else {
                 throw new OopsException("Invalid password");
             }
@@ -77,6 +80,8 @@ public class AuthenticatorEJB extends BaseEJB implements AuthenticatorEJBLocal {
         
         Map<String, String> ret = new HashMap<String, String>();
         
+        ret.put("sessionid", getCurrentUserSessionID());
+
         ret.put("login", authUser.getEmail());
         ret.put("name", authUser.getName());
         
