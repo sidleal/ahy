@@ -13,17 +13,18 @@
 //
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-package br.com.manish.ahy.kernel.content;
+
+package br.com.manish.ahy.kernel.security;
 
 import javax.ejb.Local;
 
-import br.com.manish.ahy.kernel.BaseEJBLocal;
+import br.com.manish.ahy.kernel.Site;
 
 @Local
-public interface ContentEJBLocal extends BaseEJBLocal {
-    ContentResource getResource(ContentResource filter);
-    Content getContent(Content filter);
-    Content getContentById(Long id);
-    String getParsedContent(Content filter);    
-    Content save(Content content);
+public interface SessionManagerEJBLocal {
+    String newSession(User user);
+    void endSession(String id);
+    Boolean validateSession(String id);
+    SessionInfo getInfo(String id);
+    Site getSite(String domain);
 }

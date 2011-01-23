@@ -16,6 +16,7 @@
 package br.com.manish.ahy.kernel;
 
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.SessionContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,6 +26,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import br.com.manish.ahy.kernel.exception.OopsException;
+import br.com.manish.ahy.kernel.security.SessionInfo;
+import br.com.manish.ahy.kernel.security.SessionManagerEJBLocal;
+import br.com.manish.ahy.kernel.security.User;
 
 public class BaseEJB implements BaseEJBLocal {
     private Log log = LogFactory.getLog(this.getClass());
@@ -38,7 +42,46 @@ public class BaseEJB implements BaseEJBLocal {
     @Resource(mappedName = "java:ahy-cms-ds")
     private DataSource ds;
 
+    @EJB
+    private SessionManagerEJBLocal sessionInfoEJB;
+
+    private String currentUserSessionID = "";
+
+    @Override
+    public void setCurrentUserSessionID(String currentUserSessionID) {
+        this.currentUserSessionID = currentUserSessionID;
+    }
+
+    protected String getCurrentUserSessionID() {
+        return currentUserSessionID;
+    }
     
+    protected void validateSession() {
+        validateSession(currentUserSessionID);
+    }
+    
+    protected void validateSession(String sessionId) {
+        if (!sessionInfoEJB.validateSession(sessionId)) {
+            throw new OopsException("Session expired.");
+        }
+    }
+    
+    protected void startSession(User user) {
+        String id = sessionInfoEJB.newSession(user);
+        setCurrentUserSessionID(id);
+    }
+    
+    protected User getLoggedUser() {
+        if (currentUserSessionID == null || currentUserSessionID.equals("")) {
+            throw new IllegalArgumentException("Invalid Session.");
+        }
+        User ret = null;
+        SessionInfo sessionInfo = sessionInfoEJB.getInfo(currentUserSessionID);
+        if (sessionInfo != null) {
+            ret = sessionInfo.getUser();
+        }
+        return ret;
+    }
     
     protected void logException(Throwable e, String message) {
         e.printStackTrace();
@@ -84,4 +127,8 @@ public class BaseEJB implements BaseEJBLocal {
 		this.ds = ds;
 	}
     
+	protected Site getSite(String domain) {
+	    return sessionInfoEJB.getSite(domain);
+	}
+	
 }

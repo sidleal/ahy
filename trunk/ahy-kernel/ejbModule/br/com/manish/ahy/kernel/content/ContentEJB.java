@@ -15,6 +15,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.kernel.content;
 
+import java.util.Date;
+
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -23,6 +25,7 @@ import javax.persistence.Query;
 import br.com.manish.ahy.kernel.BaseEJB;
 import br.com.manish.ahy.kernel.UpdateManagerEJB;
 import br.com.manish.ahy.kernel.addon.AddonManagerEJBLocal;
+import br.com.manish.ahy.kernel.exception.OopsException;
 
 @Stateless
 public class ContentEJB extends BaseEJB implements ContentEJBLocal {
@@ -58,6 +61,15 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
         return ret;
     }
 
+    @Override
+    public Content getContentById(Long id) {
+        Content ret = null;
+        
+        ret = getEm().find(Content.class, id);
+        
+        return ret;
+    }
+    
     @Override
     public Content getContent(Content filter) {
         Content ret = new Content();
@@ -130,6 +142,31 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             ret = ret.replaceAll(regex, "#{contextPath}/" + res);
             index = ret.indexOf("#{res:", index);
         }
+        return ret;
+    }
+
+    @Override
+    public Content save(Content content) {
+        Content ret = null;
+        try {
+            
+            if (content.getId() == null) {
+                content.setCreated(new Date());
+                content.setPublished(new Date());
+                content.setRevision(1);
+                content.setUser(getLoggedUser());                
+            } else {
+                //TODO: check and treat versions
+                content.setPublished(new Date());
+                content.setUser(getLoggedUser());  
+            }
+            
+            ret = getEm().merge(content);
+            
+        } catch (Exception e) {
+            throw new OopsException(e, "Error when saving content.");
+        }
+        
         return ret;
     }
 
