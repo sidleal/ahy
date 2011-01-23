@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import br.com.manish.ahy.client.SessionInfo;
+import br.com.technearquitetura.ProjetoCadastro;
 
 public class Template extends CustomNode {
     var screenHeight: Number = 700;
@@ -48,18 +49,20 @@ public class Template extends CustomNode {
 
     var menuGroup: Group = Group {}
 
-    var novoProjeto: MenuItem = MenuItem {
-        label: "Novo Projeto"
+    var projeto: MenuItem = MenuItem {
+        label: "Projetos"
         posX: 5, posY: 50
         onClick: function() {
             unselectMenu();
-            novoProjeto.select();
+            projeto.select();
+            var proj: ProjetoCadastro = ProjetoCadastro{};
+            insert proj into mainGroup.content;
         }
     }
 
     var editarPagina: MenuItem = MenuItem {
-        label: "Editar Páginas"
-        posX: 145, posY: 50
+        label: "Páginas"
+        posX: 125, posY: 50
         onClick: function() {
             unselectMenu();
             editarPagina.select();
@@ -68,21 +71,25 @@ public class Template extends CustomNode {
 
     var sair: MenuItem = MenuItem {
         label: "Sair"
-        posX: 285, posY: 50
+        posX: 245, posY: 50
         onClick: function() {
             unselectMenu();
-            sair.select();
+            var login: Login = Login{};
+            insert login into scene.content;
+            SessionInfo.getInstance().setUserLogin(null);
+            SessionInfo.getInstance().setUserName(null);
+            delete this from scene.content;
         }
     }
 
     function unselectMenu(): Void {
-        novoProjeto.unselect();
+        projeto.unselect();
         editarPagina.unselect();
         sair.unselect();
     }
 
     function buildMenu() {
-        insert novoProjeto into menuGroup.content;
+        insert projeto into menuGroup.content;
         insert editarPagina into menuGroup.content;
         insert sair into menuGroup.content;
     }
