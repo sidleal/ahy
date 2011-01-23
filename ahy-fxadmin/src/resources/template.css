@@ -45,3 +45,15 @@
     -fx-font: 16pt sans-serif;
     -fx-text-origin: top
 }
+
+.text-label {
+    -fx-fill: #898988;
+    -fx-font: 12pt sans-serif;
+    -fx-text-origin: top
+}
+
+.text-addon-title{
+    -fx-fill: #333457;
+    -fx-font: bold 16pt sans-serif;
+    -fx-text-origin: top
+}
