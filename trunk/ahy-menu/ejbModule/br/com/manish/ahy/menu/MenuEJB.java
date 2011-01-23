@@ -32,7 +32,7 @@ import br.com.manish.ahy.kernel.addon.BaseAddonEJB;
 public class MenuEJB extends BaseAddonEJB implements MenuEJBLocal {
     public static final Integer VERSION = 1;
     public static final Integer REVISION = 30;
-    private static final String MENU = "menu";
+    private static final String MODULE = "menu";
 
     
     @Override
@@ -105,7 +105,7 @@ public class MenuEJB extends BaseAddonEJB implements MenuEJBLocal {
 
     @Override
     public Version getVersion() {
-        return new Version(MENU, VERSION, REVISION, "");
+        return new Version(MODULE, VERSION, REVISION, "");
     }
 
 
