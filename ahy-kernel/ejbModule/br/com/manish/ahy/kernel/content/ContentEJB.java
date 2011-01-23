@@ -170,4 +170,14 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
         return ret;
     }
 
+    @Override
+    public void remove(Content content) {
+        try {
+            content = getEm().find(Content.class, content.getId());
+            getEm().remove(content);
+            
+        } catch (Exception e) {
+            throw new OopsException(e, "Error when removing content.");
+        }
+    }
 }
