@@ -56,6 +56,8 @@ public class WSServlet extends HttpServlet {
         
         BaseEJBLocal ejb = EJBFactory.getInstance().getEJB(ejbName);
         
+        ejb.setCurrentUserSessionID(parameters.get("sessionid"));
+        
         Map<String, String> retMap = new HashMap<String, String>();
         try {
             Method m = ejb.getClass().getMethod(action, Map.class);
