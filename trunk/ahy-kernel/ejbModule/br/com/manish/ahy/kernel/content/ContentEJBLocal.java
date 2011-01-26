@@ -15,6 +15,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.kernel.content;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import br.com.manish.ahy.kernel.BaseEJBLocal;
@@ -27,4 +29,7 @@ public interface ContentEJBLocal extends BaseEJBLocal {
     String getParsedContent(Content filter);    
     Content save(Content content);
     void remove(Content content);
+    ContentResource getResourceById(Long id);
+    ContentResource saveResource(ContentResource contentRes);
+    List<ContentResource> getResourcesList(ContentResource filter);
 }

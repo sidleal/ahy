@@ -15,10 +15,17 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.kernel.content;
 
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -26,6 +33,7 @@ import br.com.manish.ahy.kernel.BaseEJB;
 import br.com.manish.ahy.kernel.UpdateManagerEJB;
 import br.com.manish.ahy.kernel.addon.AddonManagerEJBLocal;
 import br.com.manish.ahy.kernel.exception.OopsException;
+import br.com.manish.ahy.kernel.util.JPAUtil;
 
 @Stateless
 public class ContentEJB extends BaseEJB implements ContentEJBLocal {
@@ -41,7 +49,12 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             getLog().debug(
                     "getImage: Content [" + filter.getContent().getShortcut() + "], Resource: [" + filter.getShortcut()
                             + "]");
-
+            Boolean thumbnail = false;
+            if (filter.getShortcut().indexOf(".thumbnail") > 0) {
+                thumbnail = true;
+                filter.setShortcut(filter.getShortcut().replaceAll("\\.thumbnail", ""));
+            }
+            
             String sql = "select cr from ContentResource cr inner join cr.content c";
             sql += " where cr.shortcut = '" + filter.getShortcut() + "' ";
             sql += " and c.shortcut = '" + filter.getContent().getShortcut() + "'";
@@ -49,11 +62,41 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             Query query = getEm().createQuery(sql);
 
             ret = (ContentResource) query.getSingleResult();
+            
+            if (thumbnail) {
+                getEm().detach(ret);
+                
+                ByteArrayInputStream bais = new ByteArrayInputStream(JPAUtil.blobToBytes(ret.getData()));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                //Image img = ImageIO.read(bais).getScaledInstance(150, 150, BufferedImage.SCALE_SMOOTH);
+                
+                BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+                img.createGraphics().drawImage(ImageIO.read(bais).getScaledInstance(200, 200, Image.SCALE_SMOOTH),0,0,null);
+                ImageIO.write(img, "jpg", baos);
+                
+                ret.setData(JPAUtil.bytesToBlob(baos.toByteArray()));
+                baos.close();
+                bais.close();
+            }
+            
 
         } catch (NoResultException nre) {
             getLog().warn("Image not found: [" + filter.getContent().getShortcut() + "/" + filter.getShortcut() + "]");
             ret = null; // TODO: return a default image.
 
+        } catch (Exception e) {
+            throw fireOopsException(e, "Error when retrieving image.");
+        }
+
+        return ret;
+    }
+        
+    @Override
+    public ContentResource getResourceById(Long id) {
+        ContentResource ret = null;
+
+        try {
+            ret = getEm().find(ContentResource.class, id);
         } catch (Exception e) {
             throw fireOopsException(e, "Error when retrieving image.");
         }
@@ -69,6 +112,25 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
         
         return ret;
     }
+    
+    @Override
+    public List<ContentResource> getResourcesList(ContentResource filter) {
+        List<ContentResource> ret = null;
+
+        try {
+            String sql = "select r from ContentResource r";
+            sql += " where r.content.id = " + filter.getContent().getId() + "";
+            Query query = getEm().createQuery(sql);
+            
+            ret = query.getResultList();
+            
+        } catch (Exception e) {
+            throw fireOopsException(e, "Error when retrieving image list.");
+        }
+
+        return ret;
+    }
+
     
     @Override
     public Content getContent(Content filter) {
@@ -180,4 +242,24 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             throw new OopsException(e, "Error when removing content.");
         }
     }
+    
+    @Override
+    public ContentResource saveResource(ContentResource contentRes) {
+        ContentResource ret = null;
+        try {
+            if (contentRes.getId() != null) {
+                getEm().merge(contentRes);
+            } else {
+                getEm().persist(contentRes);
+            }
+            
+            ret = getResource(contentRes);
+            
+        } catch (Exception e) {
+            throw new OopsException(e, "Error when saving content resource.");
+        }
+        
+        return ret;
+    }
+    
 }

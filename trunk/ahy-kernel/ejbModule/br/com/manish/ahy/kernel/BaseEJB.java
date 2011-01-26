@@ -131,4 +131,12 @@ public class BaseEJB implements BaseEJBLocal {
 	    return sessionInfoEJB.getSite(domain);
 	}
 	
+	protected void setSessionAttribute(String name, Object value) {
+	    sessionInfoEJB.setSessionAttribute(name, value);
+	}
+	
+	protected Object getSessionAttribute(String name) {
+	    return sessionInfoEJB.getSessionAttribute(name);
+	}
+	
 }
