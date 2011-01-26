@@ -31,7 +31,9 @@ import br.com.manish.ahy.kernel.util.HashUtil;
 @Service
 public class SessionManagerEJB implements SessionManagerEJBLocal {
     private Map<String, SessionInfo> sessionMap = new HashMap<String, SessionInfo>();
-    
+
+    private Map<String, Object> sessionBufferMap = new HashMap<String, Object>();
+
     @PersistenceContext
     private EntityManager em;
     
@@ -83,4 +85,13 @@ public class SessionManagerEJB implements SessionManagerEJBLocal {
         return ret;
     }
     
+    @Override
+    public void setSessionAttribute(String name, Object value) {
+        sessionBufferMap.put(name, value);
+    }
+    
+    @Override
+    public Object getSessionAttribute(String name) {
+        return sessionBufferMap.get(name);
+    }
 }

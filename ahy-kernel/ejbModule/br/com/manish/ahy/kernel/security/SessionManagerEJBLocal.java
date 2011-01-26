@@ -27,4 +27,6 @@ public interface SessionManagerEJBLocal {
     Boolean validateSession(String id);
     SessionInfo getInfo(String id);
     Site getSite(String domain);
+    void setSessionAttribute(String name, Object value);
+    Object getSessionAttribute(String name);
 }
