@@ -110,7 +110,8 @@ public class Login extends CustomNode {
 
 
     function authenticate() {
-        SessionInfo.getInstance().setDomain("www.technearquitetura.com.br:8080"); //TODO: get the domain from somewhere
+        //SessionInfo.getInstance().setDomain("www.technearquitetura.com.br:8080"); //TODO: get the domain from somewhere
+        SessionInfo.getInstance().setDomain("techne.ahycms.org:4100"); //TODO: get the domain from somewhere
 
         var loginModel: LoginModel = new LoginModel();
         var userMap: Map = loginModel.authenticate(txtUser.text, txtPassword.text);
