@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://techne.ahycms.org:4100/fx/admin/" href="ahy-fxadmin_browser.jnlp">
+    <information>
+        <title>ahy-fxadmin</title>
+        <vendor>Ahy CMS</vendor>
+        <homepage href=""/>
+        <description>ahy-fxadmin</description>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.5+"/>
+        <extension name="JavaFX Runtime" href="http://dl.javafx.com/1.3/javafx-rt.jnlp"/>
+        <jar href="ahy-fxadmin.jar" main="true"/>
+        <jar href="lib/ahy-client.jar"/>
+    </resources>
+    <applet-desc name="ahy-fxadmin" main-class="com.sun.javafx.runtime.adapter.Applet" width="1000" height="700">
+        <param name="MainJavaFXScript" value="br.com.manish.ahy.fxadmin.Main"/>
+    </applet-desc>
+    <update check="always"/>
+</jnlp>
