@@ -57,3 +57,9 @@
     -fx-font: bold 16pt sans-serif;
     -fx-text-origin: top
 }
+
+.text-internal-button {
+    -fx-fill: #FF740A;
+    -fx-font: bold 16pt sans-serif;
+    -fx-text-origin: top
+}

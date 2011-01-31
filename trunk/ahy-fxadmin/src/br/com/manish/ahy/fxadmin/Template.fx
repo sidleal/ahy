@@ -23,6 +23,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import br.com.manish.ahy.client.SessionInfo;
 import br.com.technearquitetura.ProjetoCadastro;
+import br.com.technearquitetura.ConteudoCadastro;
+import javafx.stage.Screen;
 
 public class Template extends CustomNode {
     var screenHeight: Number = 700;
@@ -43,11 +45,21 @@ public class Template extends CustomNode {
         styleClass: "text-logged-user"
     }
 
+    var screenInfo: Text = Text {
+        content: "{Screen.primary.visualBounds.width} x {Screen.primary.visualBounds.height}";
+        layoutX: bind screenWidth - loggedUser.layoutBounds.width;
+        layoutY: 100
+        styleClass: "text-logged-user"
+    }
+
     var mainGroup: Group = Group {
-        content: [title, loggedUser]
+        content: [title, loggedUser, screenInfo]
     }
 
     var menuGroup: Group = Group {}
+
+    var proj: ProjetoCadastro = ProjetoCadastro{};
+    var content: ConteudoCadastro = ConteudoCadastro{};
 
     var projeto: MenuItem = MenuItem {
         label: "Projetos"
@@ -55,7 +67,6 @@ public class Template extends CustomNode {
         onClick: function() {
             unselectMenu();
             projeto.select();
-            var proj: ProjetoCadastro = ProjetoCadastro{};
             insert proj into mainGroup.content;
         }
     }
@@ -66,6 +77,7 @@ public class Template extends CustomNode {
         onClick: function() {
             unselectMenu();
             editarPagina.select();
+            insert content into mainGroup.content;
         }
     }
 
@@ -86,6 +98,9 @@ public class Template extends CustomNode {
         projeto.unselect();
         editarPagina.unselect();
         sair.unselect();
+
+        delete proj from mainGroup.content;
+        delete content from mainGroup.content;
     }
 
     function buildMenu() {
