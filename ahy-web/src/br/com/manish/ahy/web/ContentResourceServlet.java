@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.content.Content;
 import br.com.manish.ahy.kernel.content.ContentEJBLocal;
 import br.com.manish.ahy.kernel.content.ContentResource;
@@ -36,7 +37,9 @@ public class ContentResourceServlet extends HttpServlet {
 
         String path = req.getServletPath();
         path = path.substring(1, path.length());
-
+        
+        String domain = req.getServerName();
+        
         if (path.indexOf("/") < 1) {
             throw new ServletException("Wrong resource path. [" + path + "]");
         }
@@ -48,6 +51,8 @@ public class ContentResourceServlet extends HttpServlet {
         filter.setContent(new Content());
         
         filter.getContent().setShortcut(contentShortCut);
+        filter.getContent().setSite(new Site());
+        filter.getContent().getSite().setDomain(domain);
         filter.setShortcut(resourceShortCut);
         
         ContentEJBLocal ejb = EJBFactory.getInstance().getEJB(ContentEJBLocal.class);
