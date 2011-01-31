@@ -15,17 +15,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.kernel.content;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.imageio.ImageIO;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -33,6 +29,7 @@ import br.com.manish.ahy.kernel.BaseEJB;
 import br.com.manish.ahy.kernel.UpdateManagerEJB;
 import br.com.manish.ahy.kernel.addon.AddonManagerEJBLocal;
 import br.com.manish.ahy.kernel.exception.OopsException;
+import br.com.manish.ahy.kernel.util.ImageUtil;
 import br.com.manish.ahy.kernel.util.JPAUtil;
 
 @Stateless
@@ -49,30 +46,56 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             getLog().debug(
                     "getImage: Content [" + filter.getContent().getShortcut() + "], Resource: [" + filter.getShortcut()
                             + "]");
-            Boolean thumbnail = false;
-            if (filter.getShortcut().indexOf(".thumbnail") > 0) {
-                thumbnail = true;
-                filter.setShortcut(filter.getShortcut().replaceAll("\\.thumbnail", ""));
+            
+            String resize = null;
+            String[] pathTokens = filter.getShortcut().split("\\.");
+            String controlToken = pathTokens[pathTokens.length-2];
+            if (controlToken.startsWith("thumbnail") || controlToken.startsWith("size")) {
+                resize = controlToken;
+                filter.setShortcut(filter.getShortcut().replaceAll("\\." + controlToken, ""));
             }
             
             String sql = "select cr from ContentResource cr inner join cr.content c";
-            sql += " where cr.shortcut = '" + filter.getShortcut() + "' ";
+            sql += " where c.site.domain = '" + filter.getContent().getSite().getDomain() + "'";
+            sql += " and cr.shortcut = '" + filter.getShortcut() + "' ";
             sql += " and c.shortcut = '" + filter.getContent().getShortcut() + "'";
 
             Query query = getEm().createQuery(sql);
 
             ret = (ContentResource) query.getSingleResult();
             
-            if (thumbnail) {
+            if (resize != null) {
                 getEm().detach(ret);
+                
+                int width = 10;
+                int height = 10;
+                if (resize.equals("thumbnail")) {
+                    width = 200;
+                    height = 170;
+                } else {
+                    String[] dimensions = resize.replaceAll("size", "").split("x");
+                    width = Integer.valueOf(dimensions[0]);
+                    height = Integer.valueOf(dimensions[1]);
+                }
                 
                 ByteArrayInputStream bais = new ByteArrayInputStream(JPAUtil.blobToBytes(ret.getData()));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                //Image img = ImageIO.read(bais).getScaledInstance(150, 150, BufferedImage.SCALE_SMOOTH);
                 
+                baos = ImageUtil.scale(bais, width, height);
+                
+                /*
+                BufferedImage img = ImageIO.read(bais);
+                
+                img = ImageUtil.resizeBetter(img, width, height);
+                ImageIO.write(img, "png", baos);
+                */
+                
+                /*
                 BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
                 img.createGraphics().drawImage(ImageIO.read(bais).getScaledInstance(200, 200, Image.SCALE_SMOOTH),0,0,null);
-                ImageIO.write(img, "jpg", baos);
+                ImageIO.write(img, "jpg", baos); */
+                
+                
                 
                 ret.setData(JPAUtil.bytesToBlob(baos.toByteArray()));
                 baos.close();
@@ -90,7 +113,32 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
 
         return ret;
     }
-        
+
+    @Override
+    public ContentResource getFirstResource(Content filter) {
+        ContentResource ret = new ContentResource();
+
+        try {
+            
+            String sql = "select cr from ContentResource cr inner join cr.content c";
+            sql += " where c.site.domain = '" + filter.getSite().getDomain() + "'";
+            sql += " and c.shortcut = '" + filter.getShortcut() + "' ";
+            sql += " order by cr.id desc";
+            
+            Query query = getEm().createQuery(sql);
+
+            List list = query.getResultList();
+            if (list.size() > 0) {
+                ret = (ContentResource) list.get(0);
+            }
+            
+        } catch (Exception e) {
+            throw fireOopsException(e, "Error when retrieving image.");
+        }
+
+        return ret;
+    }
+
     @Override
     public ContentResource getResourceById(Long id) {
         ContentResource ret = null;
@@ -102,6 +150,16 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
         }
 
         return ret;
+    }
+    
+    @Override
+    public void removeContentResource(Long id) {
+        try {
+            ContentResource res = getEm().find(ContentResource.class, id);
+            getEm().remove(res);
+        } catch (Exception e) {
+            throw fireOopsException(e, "Error when removing image.");
+        }
     }
 
     @Override

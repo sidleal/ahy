@@ -32,4 +32,6 @@ public interface ContentEJBLocal extends BaseEJBLocal {
     ContentResource getResourceById(Long id);
     ContentResource saveResource(ContentResource contentRes);
     List<ContentResource> getResourcesList(ContentResource filter);
+    ContentResource getFirstResource(Content filter);
+    void removeContentResource(Long id);
 }
