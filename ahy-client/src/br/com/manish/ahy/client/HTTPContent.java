@@ -33,7 +33,9 @@ public class HTTPContent {
         String ret = null;
         if (charset != null) {
             try {
-                ret = new String(content, charset);
+                if (content != null) {
+                    ret = new String(content, charset);
+                }
             } catch (UnsupportedEncodingException ex) {
                 ret = "charset error";
             }
