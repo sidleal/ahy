@@ -16,6 +16,9 @@
 
 package br.com.manish.ahy.client;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SessionInfo {
 
     private static SessionInfo me;
@@ -34,6 +37,8 @@ public class SessionInfo {
     private String sessionId = "";
     private String userLogin;
     private String userName;
+
+    private Map<String, Object> imageCache = new HashMap<String, Object>();
 
     public String getUserLogin() {
         return userLogin;
@@ -65,6 +70,14 @@ public class SessionInfo {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Map<String, Object> getImageCache() {
+        return imageCache;
+    }
+
+    public void setImageCache(Map<String, Object> imageCache) {
+        this.imageCache = imageCache;
     }
 
 }

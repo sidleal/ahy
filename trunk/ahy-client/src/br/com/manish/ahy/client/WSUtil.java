@@ -54,16 +54,17 @@ public class WSUtil {
         try {
             String content = callStringWS(wsName, action, parameters);
 
-            String[] retTokens = content.split("&");
-            for (String item: retTokens) {
-                String[] itemToken = item.split("=");
-                if (item.indexOf("=") > 0) {
-                    ret.put(itemToken[0], URLDecoder.decode(itemToken[1].trim(), "UTF-8"));
-                } else {
-                    ret.put("error", "Blank response from httpcontent.");
+            if (content != null) {
+                String[] retTokens = content.split("&");
+                for (String item: retTokens) {
+                    String[] itemToken = item.split("=");
+                    if (item.indexOf("=") > 0) {
+                        ret.put(itemToken[0], URLDecoder.decode(itemToken[1].trim(), "UTF-8"));
+                    } else {
+                        ret.put("error", "Blank response from httpcontent.");
+                    }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             throw new OopsException(e, "Error when calling Map WS: {0}", wsName);
