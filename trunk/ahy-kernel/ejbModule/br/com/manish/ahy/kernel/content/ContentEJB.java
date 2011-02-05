@@ -50,7 +50,7 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             String resize = null;
             String[] pathTokens = filter.getShortcut().split("\\.");
             String controlToken = pathTokens[pathTokens.length-2];
-            if (controlToken.startsWith("thumbnail") || controlToken.startsWith("size")) {
+            if (controlToken.startsWith("thumbnail") || controlToken.startsWith("size") || controlToken.startsWith("crop") || controlToken.startsWith("smart")) {
                 resize = controlToken;
                 filter.setShortcut(filter.getShortcut().replaceAll("\\." + controlToken, ""));
             }
@@ -66,35 +66,32 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             
             if (resize != null) {
                 getEm().detach(ret);
-                
+
+                ByteArrayInputStream bais = new ByteArrayInputStream(JPAUtil.blobToBytes(ret.getData()));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
                 int width = 10;
                 int height = 10;
                 if (resize.equals("thumbnail")) {
                     width = 200;
                     height = 170;
+                    baos = ImageUtil.scale(bais, width, height);
+                } else if (resize.startsWith("crop")) {
+                    String[] dimensions = resize.replaceAll("crop", "").split("x");
+                    width = Integer.valueOf(dimensions[0]);
+                    height = Integer.valueOf(dimensions[1]);
+                    baos = ImageUtil.crop(bais, width, height);
+                } else if (resize.startsWith("smart")) {
+                    String[] dimensions = resize.replaceAll("smart", "").split("x");
+                    width = Integer.valueOf(dimensions[0]);
+                    height = Integer.valueOf(dimensions[1]);
+                    baos = ImageUtil.smartCrop(bais, width, height);
                 } else {
                     String[] dimensions = resize.replaceAll("size", "").split("x");
                     width = Integer.valueOf(dimensions[0]);
                     height = Integer.valueOf(dimensions[1]);
+                    baos = ImageUtil.scale(bais, width, height);
                 }
-                
-                ByteArrayInputStream bais = new ByteArrayInputStream(JPAUtil.blobToBytes(ret.getData()));
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                
-                baos = ImageUtil.scale(bais, width, height);
-                
-                /*
-                BufferedImage img = ImageIO.read(bais);
-                
-                img = ImageUtil.resizeBetter(img, width, height);
-                ImageIO.write(img, "png", baos);
-                */
-                
-                /*
-                BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
-                img.createGraphics().drawImage(ImageIO.read(bais).getScaledInstance(200, 200, Image.SCALE_SMOOTH),0,0,null);
-                ImageIO.write(img, "jpg", baos); */
-                
                 
                 
                 ret.setData(JPAUtil.bytesToBlob(baos.toByteArray()));
