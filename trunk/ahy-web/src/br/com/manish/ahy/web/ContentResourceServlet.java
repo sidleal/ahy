@@ -15,6 +15,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package br.com.manish.ahy.web;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -47,26 +50,57 @@ public class ContentResourceServlet extends HttpServlet {
         String contentShortCut = path.substring(0, path.lastIndexOf("/"));
         String resourceShortCut = path.substring(path.lastIndexOf("/")+1, path.length());
         
-        ContentResource filter = new ContentResource();
-        filter.setContent(new Content());
         
-        filter.getContent().setShortcut(contentShortCut);
-        filter.getContent().setSite(new Site());
-        filter.getContent().getSite().setDomain(domain);
-        filter.setShortcut(resourceShortCut);
+        byte[] fileData = null;
+        String fileShortcut;
+        String fileType;
         
-        ContentEJBLocal ejb = EJBFactory.getInstance().getEJB(ContentEJBLocal.class);
-
-        ContentResource ret = ejb.getResource(filter);
+        String tempDir = System.getProperty("java.io.tmpdir");
+        File cacheDir = new File(tempDir + "/ahytmp");
+        if (!cacheDir.exists()) {
+            cacheDir.mkdir();
+        }
+        String cacheFilePath  = (contentShortCut + "/" + resourceShortCut).replaceAll("/", "_");
+        File cacheFile = new File(cacheDir, cacheFilePath);
         
-        if (ret != null) {
-            resp.setHeader("Content-disposition", "inline; filename=" + ret.getShortcut());
+        if (cacheFile.exists()) {
+            fileData = new byte[Long.valueOf(cacheFile.length()).intValue()];
+            fileShortcut = resourceShortCut;
+            fileType = "image/jpeg"; //TODO: hardcoded stinks
+            FileInputStream fis = new FileInputStream(cacheFile);
+            fis.read(fileData);
+            fis.close();        
+        } else {
+            
+            ContentResource filter = new ContentResource();
+            filter.setContent(new Content());
+            
+            filter.getContent().setShortcut(contentShortCut);
+            filter.getContent().setSite(new Site());
+            filter.getContent().getSite().setDomain(domain);
+            filter.setShortcut(resourceShortCut);
+            
+            ContentEJBLocal ejb = EJBFactory.getInstance().getEJB(ContentEJBLocal.class);
+    
+            ContentResource ret = ejb.getResource(filter);
+            fileShortcut = ret.getShortcut();
+            fileType = ret.getType();
+            fileData = JPAUtil.blobToBytes(ret.getData());
+            
+            cacheFile.createNewFile();
+            FileOutputStream fos = new FileOutputStream(cacheFile);
+            fos.write(fileData);
+            fos.close();
+        }
+        
+        if (fileData != null) {
+            
+            resp.setHeader("Content-disposition", "inline; filename=" + fileShortcut);
             long expires = new Date().getTime() + 1000*60*60*6; // six hours
             resp.setDateHeader("Expires", expires);
-            resp.setContentType(ret.getType());
+            resp.setContentType(fileType);
     
-            byte[] file = JPAUtil.blobToBytes(ret.getData());
-            resp.getOutputStream().write(file);
+            resp.getOutputStream().write(fileData);
         }
 
     }
