@@ -37,6 +37,7 @@ import br.com.manish.ahy.fxadmin.ImageFileFilter;
 import javafx.scene.control.TextBox;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.LayoutInfo;
+import javafx.scene.control.CheckBox;
 
 public class ProjetoFotoCadastro extends CustomNode {
     var height: Number = 430;
@@ -45,7 +46,7 @@ public class ProjetoFotoCadastro extends CustomNode {
     public var posX: Number = 50;
     public var posY: Number = 100;
 
-    var tamanho: Number = 1;
+    var opacidade: Number = 0.5;
 
     public var list: List = new ArrayList() on replace {
         montaList();
@@ -64,12 +65,29 @@ public class ProjetoFotoCadastro extends CustomNode {
 
     var txtLabel:TextBox = TextBox {
         promptText: "Legenda";
-        layoutInfo: LayoutInfo{width: 550, height: 20}
+        layoutInfo: LayoutInfo{width: 410, height: 20}
         layoutX: bind posX
-        layoutY: bind posY - 20
+        layoutY: bind posY - 23
         onKeyPressed: function( ke: KeyEvent ):Void {
             projetoFotoSelected.setLegenda(txtLabel.rawText);
         }
+    }
+
+    var chkFrontPage: CheckBox = CheckBox {
+	allowTriState: false
+	selected: false
+        translateX: bind posX + 415
+        translateY: bind posY - 21
+        onMouseReleased: function( me: MouseEvent ):Void {
+            projetoFotoSelected.setShowInFrontPage(chkFrontPage.selected);
+        }
+    }
+
+    var lblFrontPage: Text = Text {
+        content: "Página principal";
+        layoutX: bind posX + 430;
+        layoutY: bind posY - 21
+        styleClass: "text-label"
     }
 
     var imageGroup: Group = Group {
@@ -96,9 +114,16 @@ public class ProjetoFotoCadastro extends CustomNode {
                 posY: bind posY + 5 + (height/4-10 + 5) * cY
                 projetoFoto: item as Imagem
                 onClick: function(projFoto: Imagem) {
+                    for (it in imageGroup.content) {
+                        if (it instanceof ProjetoFotoItem) {
+                            (it as ProjetoFotoItem).selected = false;
+                        }
+                    }
+                    fotoItem.selected = true;
                     projetoFotoSelected = projFoto;
                     txtLabel.commit();
                     txtLabel.text = projFoto.getLegenda();
+                    chkFrontPage.selected = projFoto.getShowInFrontPage();
                 }
 
             }
@@ -149,8 +174,7 @@ public class ProjetoFotoCadastro extends CustomNode {
                     styleClass: "text-internal-button"
                 }
             ]
-            scaleX: bind tamanho
-            scaleY: bind tamanho
+            opacity: bind opacidade
             onMouseEntered: function (me: MouseEvent) {
                 itemNew.toFront();
                 cresce.playFromStart();
@@ -168,6 +192,8 @@ public class ProjetoFotoCadastro extends CustomNode {
         montaList();
 
         insert txtLabel into mainGroup.content;
+        insert chkFrontPage into mainGroup.content;
+        insert lblFrontPage into mainGroup.content;
         mainGroup
     }
     
@@ -177,7 +203,7 @@ public class ProjetoFotoCadastro extends CustomNode {
             KeyFrame {
                 time : 0.1s
                 values : [
-                    tamanho => 2 tween Interpolator.EASEOUT
+                    opacidade => 1 tween Interpolator.EASEOUT
                 ]
             }
         ]
@@ -187,7 +213,7 @@ public class ProjetoFotoCadastro extends CustomNode {
             KeyFrame {
                 time : 0.4s
                 values : [
-                    tamanho => 1 tween Interpolator.EASEIN
+                    opacidade => 0.5 tween Interpolator.EASEIN
                 ]
             }
         ]

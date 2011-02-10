@@ -5,6 +5,7 @@ public class Imagem {
     private Long id;
     private String legenda;
     private String caminhoArquivo;
+    private Boolean showInFrontPage = false;
 
     public String getCaminhoArquivo() {
         return caminhoArquivo;
@@ -29,4 +30,13 @@ public class Imagem {
     public void setLegenda(String legenda) {
         this.legenda = legenda;
     }
+
+    public Boolean getShowInFrontPage() {
+        return showInFrontPage;
+    }
+
+    public void setShowInFrontPage(Boolean showInFrontPage) {
+        this.showInFrontPage = showInFrontPage;
+    }
+    
 }

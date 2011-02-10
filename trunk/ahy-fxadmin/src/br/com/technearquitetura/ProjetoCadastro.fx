@@ -24,7 +24,6 @@ import javafx.scene.control.TextBox;
 import javafx.scene.Cursor;
 import javafx.scene.layout.LayoutInfo;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +33,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import java.util.ArrayList;
 import java.util.List;
-import br.com.manish.ahy.fxadmin.AsyncTask;
 import java.lang.System;
 import br.com.manish.ahy.client.SessionInfo;
+import br.com.manish.ahy.fxadmin.AsyncTask;
 
 public class ProjetoCadastro extends CustomNode {
     var height: Number = 600;
@@ -47,8 +46,8 @@ public class ProjetoCadastro extends CustomNode {
     var model: ProjetoCadastroModel = new ProjetoCadastroModel();
 
     var title: Text = Text {
-        content: "Cadastro de projetos"
-        layoutX: bind posX;
+        content: bind "Cadastro de projetos"
+        layoutX: bind posX
         layoutY: bind posY + 10
         styleClass: "text-addon-title"
     }
@@ -71,14 +70,14 @@ public class ProjetoCadastro extends CustomNode {
             clean();
             if ((cmbAcao.selectedItem as Projeto).getId() != null) {
                 cmbAcao.cursor = Cursor.WAIT;
-                AsyncTask {
-                   run: function() {
+                //AsyncTask {
+                //   run: function() {
                        carregarProjeto((cmbAcao.selectedItem as Projeto).getId());
-                   }
-                   onDone: function() {
+                 //  }
+                  // onDone: function() {
                        cmbAcao.cursor = Cursor.DEFAULT;
-                   }
-                }.start();
+                  // }
+                //}.start();
             }
         }
     }
@@ -112,18 +111,6 @@ public class ProjetoCadastro extends CustomNode {
         items: []
     }
 
-    var chkFrontPage: CheckBox = CheckBox {
-	allowTriState: false
-	selected: false
-        translateX: bind posX + 150
-        translateY: bind posY + 352
-    }
-    var lblFrontPage: Text = Text {
-        content: "Mostrar na página principal";
-        layoutX: bind posX + 170;
-        layoutY: bind posY + 352
-        styleClass: "text-label"
-    }
 
     var cmbTipo: ChoiceBox = ChoiceBox {
         translateX: bind posX
@@ -178,10 +165,10 @@ public class ProjetoCadastro extends CustomNode {
             ret = false;
         }
 
-        if (txtFicha.text.trim().equals("")) {
-            alertText += "Informe a ficha técnica.";
-            ret = false;
-        }
+        //if (txtFicha.text.trim().equals("")) {
+        //    alertText += "Informe a ficha técnica.";
+        //    ret = false;
+        //}
 
         if ((cmbSituacao.selectedItem as KeyValue).toString().equals("")) {
             alertText += "Informe a situação.";
@@ -201,7 +188,6 @@ public class ProjetoCadastro extends CustomNode {
         txtDescricao.text = "";
         txtFicha.text = "";
         cmbSituacao.clearSelection();
-        chkFrontPage.selected = false;
         fotoCad.list = new ArrayList();
         cmbTipo.clearSelection();
     }
@@ -213,7 +199,6 @@ public class ProjetoCadastro extends CustomNode {
         map.put("teaser", txtFicha.text);
         map.put("text", txtDescricao.text);
         map.put("status", (cmbSituacao.selectedItem as KeyValue).getKey());
-        map.put("showinfrontpage", chkFrontPage.selected.toString());
         map.put("type", (cmbTipo.selectedItem as KeyValue).getKey());
 
         var ret: Map = model.gravar(map);
@@ -221,6 +206,7 @@ public class ProjetoCadastro extends CustomNode {
         if (ret.get("id") != null) {
 
             System.out.println("vai gravar imgs {fotoCad.list.size()}");
+
             var imgRet: Map = model.gravarImagens(ret.get("id") as String, fotoCad.list);
             if (imgRet.get("error") != null) {
                 alertText = "Erro ao gravar as imagens.";
@@ -230,6 +216,7 @@ public class ProjetoCadastro extends CustomNode {
             //var id: Long = Long.valueOf(ret.get("id") as String);
             clean();
             carregarListaProjetos();
+
         } else {
             alertText = ret.get("error") as String;
         }
@@ -261,7 +248,6 @@ public class ProjetoCadastro extends CustomNode {
                 }
                 i++;
             }
-            chkFrontPage.selected = Boolean.valueOf(ret.get("showinfrontpage") as String);
 
            // AsyncTask {
            //    run: function() {
@@ -274,7 +260,15 @@ public class ProjetoCadastro extends CustomNode {
                 var foto: Imagem = new Imagem();
                 foto.setId(Long.valueOf(imgId as String));
                 var imgToken: String[] = (imgRet.get(imgId) as String).split("\\|\\|");
-                foto.setLegenda(imgToken[1]);
+
+                if (imgToken[1].startsWith("!")) {
+                    foto.setShowInFrontPage(true);
+                    foto.setLegenda(imgToken[1].substring(1, imgToken[1].length()));
+                } else {
+                    foto.setShowInFrontPage(false);
+                    foto.setLegenda(imgToken[1]);
+                }
+                
                 var path: String = "http://{SessionInfo.getInstance().getDomain()}/{imgToken[0]}";
                 foto.setCaminhoArquivo(path);
                 imageList.add(foto);
@@ -294,8 +288,8 @@ public class ProjetoCadastro extends CustomNode {
     }
 
     var mainGroup: Group = Group {
-        content: [title, alert, cmbAcao, txtNome, txtDescricao, txtFicha, cmbSituacao, chkFrontPage,
-            lblFrontPage, cmbTipo, cmdGravar, lineDiv, lineFooter, fotoCad]
+        content: [title, alert, cmbAcao, txtNome, txtDescricao, txtFicha, cmbSituacao,
+            cmbTipo, cmdGravar, lineDiv, lineFooter, fotoCad]
     }
 
     function carregarListaProjetos() {

@@ -48,8 +48,8 @@ public class Template extends CustomNode {
     var screenInfo: Text = Text {
         content: "{Screen.primary.visualBounds.width} x {Screen.primary.visualBounds.height}";
         layoutX: bind screenWidth - loggedUser.layoutBounds.width;
-        layoutY: 100
-        styleClass: "text-logged-user"
+        layoutY: bind screenHeight - 20;
+        style: "-fx-fill: gray; -fx-font: 9pt sans-serif"
     }
 
     var mainGroup: Group = Group {

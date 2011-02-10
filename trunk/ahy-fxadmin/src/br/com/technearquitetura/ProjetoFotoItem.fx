@@ -18,14 +18,17 @@ package br.com.technearquitetura;
 import javafx.scene.Group;
 import javafx.scene.CustomNode;
 import javafx.scene.Node;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import java.lang.System;
+import br.com.manish.ahy.client.SessionInfo;
+import javafx.scene.image.Image;
+import java.util.Map;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 
 public class ProjetoFotoItem extends CustomNode {
     public var height: Number = 400;
@@ -36,7 +39,11 @@ public class ProjetoFotoItem extends CustomNode {
     public var projetoFoto: Imagem;
 
     public var onClick: function(:Imagem);
-    var tamanho: Number = 1;
+    public var selected: Boolean;
+
+    var opacidade: Number = 0.5;
+
+    var imgMap: Map = SessionInfo.getInstance().getImageCache();
 
     var mainGroup: Group = Group {
         content: []
@@ -51,9 +58,28 @@ public class ProjetoFotoItem extends CustomNode {
             url = "{url.substring(0, url.length() - extension.length())}thumbnail.{extension}";
         }
 
-        var image: Image = Image {
-        url: url;
+        var image: Image;
+        if (imgMap.containsKey(url)) {
+            image = imgMap.get(url) as Image;
+        } else {
+            image = Image {
+              url: url;
+              backgroundLoading: true;
+            }
+            imgMap.put(url, image);
         }
+
+        var rect: Rectangle = Rectangle {
+            width: bind width
+            height: bind height
+            layoutX: bind posX
+            layoutY: bind posY
+            fill: Color.TRANSPARENT
+            stroke: Color.ORANGE
+            strokeWidth: 2
+            visible: bind selected
+        }
+
         var imageView: ImageView = ImageView {
           image: image
           fitWidth: bind width
@@ -61,8 +87,7 @@ public class ProjetoFotoItem extends CustomNode {
           layoutX: bind posX
           layoutY: bind posY
           cursor: Cursor.HAND
-          scaleX: bind tamanho
-          scaleY: bind tamanho
+          opacity: bind opacidade
           blocksMouse: true
           onMouseEntered: function (me: MouseEvent) {
               this.toFront();
@@ -77,6 +102,7 @@ public class ProjetoFotoItem extends CustomNode {
 
         }
         insert imageView into mainGroup.content;
+        insert rect into mainGroup.content;
         mainGroup
     }
 
@@ -85,7 +111,7 @@ public class ProjetoFotoItem extends CustomNode {
             KeyFrame {
                 time : 0.1s
                 values : [
-                    tamanho => 2 tween Interpolator.EASEOUT
+                    opacidade => 1 tween Interpolator.EASEOUT
                 ]
             }
         ]
@@ -95,7 +121,7 @@ public class ProjetoFotoItem extends CustomNode {
             KeyFrame {
                 time : 0.3s
                 values : [
-                    tamanho => 1 tween Interpolator.EASEIN
+                    opacidade => 0.5 tween Interpolator.EASEIN
                 ]
             }
         ]
