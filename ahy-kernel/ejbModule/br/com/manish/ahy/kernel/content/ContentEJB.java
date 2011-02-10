@@ -50,7 +50,7 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             String resize = null;
             String[] pathTokens = filter.getShortcut().split("\\.");
             String controlToken = pathTokens[pathTokens.length-2];
-            if (controlToken.startsWith("thumbnail") || controlToken.startsWith("size") || controlToken.startsWith("crop") || controlToken.startsWith("smart")) {
+            if (controlToken.startsWith("thumbnail") || controlToken.startsWith("size") || controlToken.startsWith("crop") || controlToken.startsWith("smart") || controlToken.startsWith("fit")) {
                 resize = controlToken;
                 filter.setShortcut(filter.getShortcut().replaceAll("\\." + controlToken, ""));
             }
@@ -86,6 +86,11 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
                     width = Integer.valueOf(dimensions[0]);
                     height = Integer.valueOf(dimensions[1]);
                     baos = ImageUtil.smartCrop(bais, width, height);
+                } else if (resize.startsWith("fit")) {
+                    String[] dimensions = resize.replaceAll("fit", "").split("x");
+                    width = Integer.valueOf(dimensions[0]);
+                    height = Integer.valueOf(dimensions[1]);
+                    baos = ImageUtil.fit(bais, width, height);
                 } else {
                     String[] dimensions = resize.replaceAll("size", "").split("x");
                     width = Integer.valueOf(dimensions[0]);
@@ -185,7 +190,24 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
 
         return ret;
     }
+    
+    @Override
+    public List<ContentResource> getResourcesListByLabel(ContentResource filter) {
+        List<ContentResource> ret = null;
 
+        try {
+            String sql = "select r from ContentResource r";
+            sql += " where r.label like '" + filter.getLabel() + "'";
+            Query query = getEm().createQuery(sql);
+            
+            ret = query.getResultList();
+            
+        } catch (Exception e) {
+            throw fireOopsException(e, "Error when retrieving image list.");
+        }
+
+        return ret;
+    }
     
     @Override
     public Content getContent(Content filter) {

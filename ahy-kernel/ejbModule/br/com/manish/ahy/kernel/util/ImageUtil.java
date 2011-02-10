@@ -106,7 +106,7 @@ public final class ImageUtil {
                 (double)height/src.getHeight());
         g.drawRenderedImage(src,at);        
         return dest;
-}
+    }
 
     
     public static ByteArrayOutputStream crop(ByteArrayInputStream bais, int width, int height) throws IOException { 
@@ -161,5 +161,34 @@ public final class ImageUtil {
         ImageIO.write(temp,"JPG", baos);
         
         return baos;
-      }      
+    }
+
+    
+    public static ByteArrayOutputStream fit(ByteArrayInputStream bais, int width, int height) throws IOException { 
+        BufferedImage src = ImageIO.read(bais);
+        int newWidth;
+        int newHeight;
+        
+        Float scale;
+        if (src.getWidth() > src.getHeight()) {
+            scale = Float.valueOf(width) / Float.valueOf(src.getWidth());
+        } else {
+            scale = Float.valueOf(height) / Float.valueOf(src.getHeight());
+        }
+        
+        newWidth = Float.valueOf(src.getWidth() * scale).intValue();
+        newHeight = Float.valueOf(src.getHeight() * scale).intValue();
+
+       // System.out.println("--- " + src.getWidth() + " - " + width);
+       // System.out.println("--- " + src.getHeight() + " - " + height);
+       // System.out.println("--- " + scale + " -- " + Float.valueOf(src.getWidth() * scale).intValue() + " -- " + Float.valueOf(src.getHeight() * scale).intValue());
+        
+        BufferedImage temp = scale(src, newWidth, newHeight);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(temp,"JPG", baos);
+        
+        return baos;
+    }
+    
 }
