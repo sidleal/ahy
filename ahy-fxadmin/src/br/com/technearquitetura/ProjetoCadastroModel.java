@@ -108,7 +108,11 @@ public class ProjetoCadastroModel {
                 if (foto.getId() != null) {
                     parameters.put("resourceId", String.valueOf(foto.getId()));
                 }
-                parameters.put("resourceLabel", foto.getLegenda());
+                String legenda = foto.getLegenda();
+                if (foto.getShowInFrontPage()) {
+                    legenda = "!" + legenda;
+                }
+                parameters.put("resourceLabel", legenda);
 
                 if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
                     parameters.put("resourceType", "image/jpeg");
