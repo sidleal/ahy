@@ -59,7 +59,9 @@ public class WSUtil {
                 for (String item: retTokens) {
                     String[] itemToken = item.split("=");
                     if (item.indexOf("=") > 0) {
-                        ret.put(itemToken[0], URLDecoder.decode(itemToken[1].trim(), "UTF-8"));
+                        if (itemToken.length > 1) {
+                            ret.put(itemToken[0], URLDecoder.decode(itemToken[1].trim(), "UTF-8"));
+                        }
                     } else {
                         ret.put("error", "Blank response from httpcontent.");
                     }
