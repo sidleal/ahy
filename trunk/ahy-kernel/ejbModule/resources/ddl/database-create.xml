@@ -5,7 +5,7 @@
 	  <col name="id" type="java.lang.Long" required="true" generated="true" primaryKey="true"/>
 	  <col name="domain" type="java.lang.String" maxLength="250" required="true"/>
 	  <col name="status" type="java.lang.String" maxLength="3" required="true"/>
-	  <insert><col key="id" value="1"/><col key="domain" value="ahycms.local"/><col key="status" value="ACT" /></insert>
+	  <insert><col key="id" value="1"/><col key="domain" value="localhost"/><col key="status" value="ACT" /></insert>
 	</table>
 	
 	<table name="User">

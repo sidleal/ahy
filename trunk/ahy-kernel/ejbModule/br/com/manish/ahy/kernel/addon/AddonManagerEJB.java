@@ -50,7 +50,7 @@ public class AddonManagerEJB extends BaseEJB implements AddonManagerEJBLocal {
                     List<File> listFiles = Arrays.asList(root.listFiles(new FilenameFilter() {
                         @Override
                         public boolean accept(File file, String name) {
-                            return name.startsWith("ahy-") && name.endsWith(".jar");
+                            return name.startsWith("ahy-") && name.endsWith(".jar") && name.indexOf("kernel") <= 0;
                         }
                     }));
                     
