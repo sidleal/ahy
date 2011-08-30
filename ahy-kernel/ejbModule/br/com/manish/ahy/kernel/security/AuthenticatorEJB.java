@@ -23,8 +23,6 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.apache.ws.scout.model.uddi.v2.GetServiceDetail;
-
 import br.com.manish.ahy.kernel.BaseEJB;
 import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.exception.OopsException;

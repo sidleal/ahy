@@ -65,7 +65,7 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             ret = (ContentResource) query.getSingleResult();
             
             if (resize != null) {
-                getEm().detach(ret);
+//                getEm().detach(ret);
 
                 ByteArrayInputStream bais = new ByteArrayInputStream(JPAUtil.blobToBytes(ret.getData()));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();

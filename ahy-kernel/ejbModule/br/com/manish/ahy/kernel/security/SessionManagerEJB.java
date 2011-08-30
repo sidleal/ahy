@@ -20,15 +20,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
-import org.jboss.ejb3.annotation.Service;
 
 import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.util.HashUtil;
 
-@Service
+@Singleton
 public class SessionManagerEJB implements SessionManagerEJBLocal {
     private Map<String, SessionInfo> sessionMap = new HashMap<String, SessionInfo>();
 
