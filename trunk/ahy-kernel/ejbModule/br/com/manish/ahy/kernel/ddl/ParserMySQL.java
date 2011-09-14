@@ -158,6 +158,8 @@ public class ParserMySQL implements Parser {
             dao.addPreparedValue(value, type);
         }
         
+        dao.executePreparedStatement();
+        
         dao.releaseConnection();
     }
 
