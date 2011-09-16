@@ -40,7 +40,7 @@ public class ContentResourceServlet extends HttpServlet {
 
         String path = req.getServletPath();
         path = path.substring(1, path.length());
-        
+
         String domain = req.getServerName();
         
         if (path.indexOf("/") < 1) {
@@ -49,48 +49,58 @@ public class ContentResourceServlet extends HttpServlet {
 
         String contentShortCut = path.substring(0, path.lastIndexOf("/"));
         String resourceShortCut = path.substring(path.lastIndexOf("/")+1, path.length());
-        
-        
+
         byte[] fileData = null;
         String fileShortcut;
         String fileType;
-        
-        String tempDir = System.getProperty("java.io.tmpdir");
-        File cacheDir = new File(tempDir + "/ahytmp");
-        if (!cacheDir.exists()) {
-            cacheDir.mkdir();
-        }
-        String cacheFilePath  = (contentShortCut + "/" + resourceShortCut).replaceAll("/", "_");
-        File cacheFile = new File(cacheDir, cacheFilePath);
-        
-        if (cacheFile.exists()) {
-            fileData = new byte[Long.valueOf(cacheFile.length()).intValue()];
-            fileShortcut = resourceShortCut;
-            fileType = "image/jpeg"; //TODO: hardcoded stinks
-            FileInputStream fis = new FileInputStream(cacheFile);
+
+        fileShortcut = resourceShortCut;
+        fileType = getFileType(resourceShortCut);
+
+        String physicalPath = req.getSession().getServletContext().getRealPath("/") + contentShortCut + "/" + resourceShortCut;
+    	File physicalFile = new File(physicalPath);
+        if (physicalFile.exists()) {
+            fileData = new byte[Long.valueOf(physicalFile.length()).intValue()];
+            FileInputStream fis = new FileInputStream(physicalFile);
             fis.read(fileData);
             fis.close();        
         } else {
-            
-            ContentResource filter = new ContentResource();
-            filter.setContent(new Content());
-            
-            filter.getContent().setShortcut(contentShortCut);
-            filter.getContent().setSite(new Site());
-            filter.getContent().getSite().setDomain(domain);
-            filter.setShortcut(resourceShortCut);
-            
-            ContentEJBLocal ejb = EJBFactory.getInstance().getEJB(ContentEJBLocal.class);
-    
-            ContentResource ret = ejb.getResource(filter);
-            fileShortcut = ret.getShortcut();
-            fileType = ret.getType();
-            fileData = JPAUtil.blobToBytes(ret.getData());
-            
-            cacheFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(cacheFile);
-            fos.write(fileData);
-            fos.close();
+    	
+	        String tempDir = System.getProperty("java.io.tmpdir");
+	        File cacheDir = new File(tempDir + "/ahytmp");
+	        if (!cacheDir.exists()) {
+	            cacheDir.mkdir();
+	        }
+	        String cacheFilePath  = (contentShortCut + "/" + resourceShortCut).replaceAll("/", "_");
+	        File cacheFile = new File(cacheDir, cacheFilePath);
+	        
+	        if (cacheFile.exists()) {
+	            fileData = new byte[Long.valueOf(cacheFile.length()).intValue()];
+	            FileInputStream fis = new FileInputStream(cacheFile);
+	            fis.read(fileData);
+	            fis.close();        
+	        } else {
+	            
+	            ContentResource filter = new ContentResource();
+	            filter.setContent(new Content());
+	            
+	            filter.getContent().setShortcut(contentShortCut);
+	            filter.getContent().setSite(new Site());
+	            filter.getContent().getSite().setDomain(domain);
+	            filter.setShortcut(resourceShortCut);
+	            
+	            ContentEJBLocal ejb = EJBFactory.getInstance().getEJB(ContentEJBLocal.class);
+	    
+	            ContentResource ret = ejb.getResource(filter);
+	            fileShortcut = ret.getShortcut();
+	            fileType = ret.getType();
+	            fileData = JPAUtil.blobToBytes(ret.getData());
+	            
+	            cacheFile.createNewFile();
+	            FileOutputStream fos = new FileOutputStream(cacheFile);
+	            fos.write(fileData);
+	            fos.close();
+	        }
         }
         
         if (fileData != null) {
@@ -105,4 +115,19 @@ public class ContentResourceServlet extends HttpServlet {
 
     }
 
+    private String getFileType(String fileName) {
+    	
+    	String ret = "";
+    	String extension = fileName.substring(fileName.length()-3, fileName.length());
+    	
+    	if (extension.toUpperCase().equals("CSS")) {
+    		ret = "text/css";
+    	} else if (extension.toUpperCase().equals("PNG")) {
+    		ret = "image/png";
+    	} else if (extension.toUpperCase().equals("JPG")) {
+    		ret = "image/jpeg";
+    	}
+    	
+    	return ret;
+    }
 }
