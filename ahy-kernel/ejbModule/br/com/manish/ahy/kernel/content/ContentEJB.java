@@ -29,6 +29,7 @@ import br.com.manish.ahy.kernel.BaseEJB;
 import br.com.manish.ahy.kernel.UpdateManagerEJB;
 import br.com.manish.ahy.kernel.addon.AddonManagerEJBLocal;
 import br.com.manish.ahy.kernel.exception.OopsException;
+import br.com.manish.ahy.kernel.util.HtmlUtil;
 import br.com.manish.ahy.kernel.util.ImageUtil;
 import br.com.manish.ahy.kernel.util.JPAUtil;
 
@@ -65,7 +66,7 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             ret = (ContentResource) query.getSingleResult();
             
             if (resize != null) {
-//                getEm().detach(ret);
+            	getEm().detach(ret);
 
                 ByteArrayInputStream bais = new ByteArrayInputStream(JPAUtil.blobToBytes(ret.getData()));
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -263,7 +264,10 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             ret = ret.replaceAll("#\\{version\\}", UpdateManagerEJB.VERSION + "." + UpdateManagerEJB.REVISION);
             ret = ret.replaceAll("#\\{windowTitle\\}", content.getTitle());
             
-            ret = addonManagerEJB.afterHtmlParser(ret);
+            ret = addonManagerEJB.afterHtmlParser(ret, content);
+            
+            ret = HtmlUtil.replaceAccentuationChars(ret);
+            
         }
         
         return ret;

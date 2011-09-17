@@ -28,6 +28,7 @@ import java.util.jar.JarFile;
 import javax.ejb.Stateless;
 
 import br.com.manish.ahy.kernel.BaseEJB;
+import br.com.manish.ahy.kernel.content.Content;
 import br.com.manish.ahy.kernel.util.TextUtil;
 
 @Stateless
@@ -88,10 +89,10 @@ public class AddonManagerEJB extends BaseEJB implements AddonManagerEJBLocal {
     }
     
     @Override
-    public String afterHtmlParser(String html) {
+    public String afterHtmlParser(String html, Content filter) {
         List<BaseAddonEJBLocal> addonList = getAddonList();
         for (BaseAddonEJBLocal addon: addonList) {
-            html = addon.afterHtmlParser(html);
+            html = addon.afterHtmlParser(html, filter);
         }
         return html;
     }
