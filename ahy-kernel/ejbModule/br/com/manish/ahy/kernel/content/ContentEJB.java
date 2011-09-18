@@ -26,6 +26,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import br.com.manish.ahy.kernel.BaseEJB;
+import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.UpdateManagerEJB;
 import br.com.manish.ahy.kernel.addon.AddonManagerEJBLocal;
 import br.com.manish.ahy.kernel.exception.OopsException;
@@ -240,9 +241,10 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
     }
 
     @Override
-    public String getParsedContent(Content filter) {
+    public String getParsedContent(ContentFilter filter) {
         String ret = "";
-        Content content = getContent(filter);
+        Content content = getContent(filter.getContent());
+        filter.setContent(content);
         
         if (content != null) {
             ret = content.getText();
@@ -250,8 +252,11 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             ret = parseResourcesPath(ret, content.getShortcut());
             
             if (!content.getShortcut().startsWith("themes")) {//TODO: config theme.. this is just a test, have to create a class to parse.
-                filter.setShortcut("themes/default");
-                Content theme = getContent(filter);
+                
+            	Content filterTheme = new Content();
+            	filterTheme.setSite(content.getSite());
+                filterTheme.setShortcut("themes/default");
+                Content theme = getContent(filterTheme);
                 String themeRet = theme.getText();
 
                 themeRet = parseResourcesPath(themeRet, theme.getShortcut());
@@ -264,7 +269,7 @@ public class ContentEJB extends BaseEJB implements ContentEJBLocal {
             ret = ret.replaceAll("#\\{version\\}", UpdateManagerEJB.VERSION + "." + UpdateManagerEJB.REVISION);
             ret = ret.replaceAll("#\\{windowTitle\\}", content.getTitle());
             
-            ret = addonManagerEJB.afterHtmlParser(ret, content);
+            ret = addonManagerEJB.afterHtmlParser(ret, filter);
             
             ret = HtmlUtil.replaceAccentuationChars(ret);
             

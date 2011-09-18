@@ -26,7 +26,7 @@ public interface ContentEJBLocal extends BaseEJBLocal {
     ContentResource getResource(ContentResource filter);
     Content getContent(Content filter);
     Content getContentById(Long id);
-    String getParsedContent(Content filter);    
+    String getParsedContent(ContentFilter filter);    
     Content save(Content content);
     void remove(Content content);
     ContentResource getResourceById(Long id);

@@ -22,12 +22,12 @@ import org.jdom.Element;
 
 import br.com.manish.ahy.kernel.BaseEJBLocal;
 import br.com.manish.ahy.kernel.Version;
-import br.com.manish.ahy.kernel.content.Content;
+import br.com.manish.ahy.kernel.content.ContentFilter;
 
 @Local
 public interface BaseAddonEJBLocal extends BaseEJBLocal {
     Version getVersion();
-    String afterHtmlParser(String html, Content filter);
+    String afterHtmlParser(String html, ContentFilter filter);
     Element getDatabaseCreateXML();
     Element getUpdateLogXML();
 }
