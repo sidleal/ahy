@@ -21,11 +21,11 @@ import java.util.List;
 import javax.ejb.Local;
 
 import br.com.manish.ahy.kernel.BaseEJBLocal;
-import br.com.manish.ahy.kernel.content.Content;
+import br.com.manish.ahy.kernel.content.ContentFilter;
 
 @Local
 public interface AddonManagerEJBLocal extends BaseEJBLocal {
     List<BaseAddonEJBLocal> getAddonList();
     BaseAddonEJBLocal getAddon(String module);
-    String afterHtmlParser(String html, Content filter);
+    String afterHtmlParser(String html, ContentFilter filter);
 }
