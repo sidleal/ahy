@@ -27,6 +27,7 @@ import org.jdom.Element;
 
 import br.com.manish.ahy.kernel.Version;
 import br.com.manish.ahy.kernel.addon.BaseAddonEJB;
+import br.com.manish.ahy.kernel.content.ContentFilter;
 
 @Stateless
 public class MenuEJB extends BaseAddonEJB implements MenuEJBLocal {
@@ -36,7 +37,7 @@ public class MenuEJB extends BaseAddonEJB implements MenuEJBLocal {
 
     
     @Override
-    public String afterHtmlParser(String html) {
+    public String afterHtmlParser(String html, ContentFilter contentFilter) {
         
         Menu main = getMainMenu("Menu");
         
