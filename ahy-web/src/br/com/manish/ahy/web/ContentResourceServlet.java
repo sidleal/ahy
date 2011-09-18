@@ -118,8 +118,9 @@ public class ContentResourceServlet extends HttpServlet {
     private String getFileType(String fileName) {
     	
     	String ret = "";
-    	String extension = fileName.substring(fileName.length()-3, fileName.length());
-    	
+        String[] tokens = fileName.split("\\.");
+        String extension = tokens[tokens.length-1];
+
     	if (extension.toUpperCase().equals("CSS")) {
     		ret = "text/css";
     	} else if (extension.toUpperCase().equals("PNG")) {

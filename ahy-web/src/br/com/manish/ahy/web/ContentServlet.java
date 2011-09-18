@@ -16,6 +16,8 @@
 package br.com.manish.ahy.web;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,6 +28,7 @@ import br.com.manish.ahy.kernel.Site;
 import br.com.manish.ahy.kernel.UpdateManagerEJBLocal;
 import br.com.manish.ahy.kernel.content.Content;
 import br.com.manish.ahy.kernel.content.ContentEJBLocal;
+import br.com.manish.ahy.kernel.content.ContentFilter;
 import br.com.manish.ahy.web.util.SessionInfo;
 import br.com.manish.ahy.web.util.WebUtil;
 
@@ -42,11 +45,19 @@ public class ContentServlet extends HttpServlet {
         String path = req.getServletPath();
         path = path.substring(1, path.length() - 4);
 
-        Content filter = new Content();
-        filter.setSite(new Site());
-        filter.getSite().setDomain(domain);
+        ContentFilter filter = new ContentFilter();
+        filter.setContent(new Content());
+        filter.getContent().setSite(new Site());
+        filter.getContent().getSite().setDomain(domain);
         
-        filter.setShortcut(path);
+        filter.getContent().setShortcut(path);
+
+        //parameters.
+        Map <String, String> parameterMap = new HashMap<String, String>();
+        for (String par : req.getParameterMap().keySet()) {
+        	parameterMap.put(par, req.getParameter(par));
+        }
+        filter.setParameterMap(parameterMap);
         
         ContentEJBLocal ejb = EJBFactory.getInstance().getEJB(ContentEJBLocal.class);
 
